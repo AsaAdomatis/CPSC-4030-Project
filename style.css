@@ -1,24 +1,32 @@
-.center {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+center {
+    text-align: center;
+    justify-content: center;
 }
 
-.vertical-center {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
+left {
+    text-align: left;
+    justify-content: left;
 }
 
-.horizontal-center {
-  margin: 0;
-  position: absolute;
-  left: 50%;
-  -ms-transform: translateX(-50%);
-  transform: translateX(-50%);
+right {
+    text-align: right;
+    justify-content: right;
+}
+
+right-text {
+    font-size: 20px;
+    padding-left: 50px;
+    float: left;
+}
+
+left-text {
+    font-size: 20px;
+    padding-right: 50px;
+    float: right;
+}
+
+container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
