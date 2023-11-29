@@ -67,15 +67,18 @@ def generalize_shapes(row):
 def calculate_counties(row):
     latitude = float(row['latitiude'])
     longitude = float(row['longitude'])
-    geolocator = Nominatim(user_agent="Asa Adomatis", timeout=5)
-    location = geolocator.reverse((latitude, longitude))
-    
-    if location and 'address' in location.raw:
-        address = location.raw['address']
-        if 'county' in address:
-            return address['county']
-    
-    return "Unknown"
+    try:
+        geolocator = Nominatim(user_agent="Asa Adomatis", timeout=5)
+        location = geolocator.reverse((latitude, longitude))
+        
+        if location and 'address' in location.raw:
+            address = location.raw['address']
+            if 'county' in address:
+                return address['county']
+    except:
+        print(f"Failed to Locate: {latitude} {longitude}")
+        return 'Unknown'
+    return 'Unknown'
 
 # running the additions
 print('Beginning Program')
@@ -94,5 +97,5 @@ for chunk in pd.read_csv(input_csv, chunksize=chunk_size):
     print()
 
 # saving final data
-output_csv = "final-date.csv"
+output_csv = "final-data.csv"
 all_data.to_csv(output_csv, index=False)
