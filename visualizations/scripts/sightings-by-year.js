@@ -1,4 +1,4 @@
-d3.csv("..\\..\\data\\nuforc-reports-2016-with-headers.csv").then(
+d3.csv("..\\..\\data\\final-data.csv").then(
 	function(dataset){
 		var dimensions = {
             width: 1000,
@@ -19,11 +19,11 @@ d3.csv("..\\..\\data\\nuforc-reports-2016-with-headers.csv").then(
             if (d.dateTime.indexOf("/") != -1) {
                 return true;
             }
-            console.log("NaN date time found")
+            //console.log("NaN date time found")
             return
         })
 
-        console.log(dataset)
+        //console.log(dataset)
 
         var svg = d3.select("#sightings-by-year")
             .attr("width", dimensions.width)
@@ -54,7 +54,7 @@ d3.csv("..\\..\\data\\nuforc-reports-2016-with-headers.csv").then(
                 max = count[d]
             }
         })
-        console.log(countKeys)
+        //console.log(countKeys)
 
         var xScale = d3.scaleLinear()
             .domain([firstTick, lastTick])
