@@ -1,7 +1,7 @@
 d3.csv("..\\..\\data\\final-data.csv").then(
     function(dataset) {
         
-        d3.json("..\\..\\data\\us-state-geo.json").then(
+        d3.json("..\\..\\data\\us-counties-geo.json").then(
             function(mapdata){
                 // getting a list of all us states and the counts of that generalized shape per sighting
                 const validStates = ['al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga', 'hi', 'id', 'il', 
@@ -10,36 +10,30 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 'va', 'wa', 'wv', 'wi', 'wy'];
                 var sightings = {};
                 dataset.forEach(d => {
-                    var state = d["state"];
-                    var shape = d["generalizedShape"];
-                    if (validStates.includes(state)) {
-                        if (state == "") 
-                            state = "misc";
-
-                        if (sightings.hasOwnProperty(state)) {
-                            // has state and shape
-                            if (sightings[state].hasOwnProperty(shape)) {
-                                sightings[state][shape]++;
+                    var county = d.county;
+                    var shape = d.generalizedShape;
+                    if (validStates.includes(d.state)) {
+                        if (sightings.hasOwnProperty(county)) {
+                            if (sightings[county].hasOwnProperty(shape)) {
+                                sightings[county][shape]++;
                             }
-                            // has state but no shape
                             else {
-                                sightings[state][shape] = 1;
+                                sightings[county][shape] = 1;
                             }
-                        } 
-                        // neither state nor shape                      
+                        }                
                         else {
-                            sightings[state] = {};
-                            sightings[state][shape] = 1;
+                            sightings[county] = {};
+                            sightings[county][shape] = 1;
                         }  
                     }   
                 });
                 // adding totals
-                Object.keys(sightings).forEach(function(stateKey, stateIndex) {
+                Object.keys(sightings).forEach(function(countyKey, countyIndex) {
                     let total = 0;
-                    Object.keys(sightings[stateKey]).forEach(function(shapeKey, shapeIndex) {
-                        total += sightings[stateKey][shapeKey];
+                    Object.keys(sightings[countyKey]).forEach(function(shapeKey, shapeIndex) {
+                        total += sightings[countyKey][shapeKey];
                     })
-                    sightings[stateKey].total = total;
+                    sightings[countyKey].total = total;
                 });
 
                 
@@ -48,7 +42,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     height: 800
                 };
 
-                var svg = d3.select("#sightings-by-state")
+                var svg = d3.select("#sightings-by-county")
                     .attr("width", size.width)
                     .attr("height", size.height);
 
@@ -56,7 +50,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .fitWidth(size.width, {type: "Sphere"})
                     // .rotate([100, 0, 0]);
 
-                
                 var pathGenerator = d3.geoPath(projection);
 
                 // drawing background
@@ -76,28 +69,26 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     }      
                 });
 
-                var colorScale = d3.scaleLinear()
-                    .domain([0, max])
-                    .range(["GhostWhite", "DarkBlue"]);
+                var thresholds = [1, 5, 10, 25, 50, 100, 250, 500]
+                var colorScale = d3.scaleThreshold()
+                    .domain(thresholds)
+                    .range(d3.schemePuBu[thresholds.length]);
 
-                var states = svg.append("g")
-                    .selectAll(".state")
+                var counties = svg.append("g")
+                    .selectAll(".county")
                     .data(mapdata.features)
                     .enter()
                     .append("path")
-                    .attr("class", "state")
+                    .attr("class", "county")
                     .attr("d", d => pathGenerator(d))
                     .attr("fill", d => {
-                        if(d.properties.admin == "United States of America") {
-                            if (d.hasOwnProperty("properties") && d.properties.hasOwnProperty("postal") && d.properties.postal !== null) {
-                                var state = d.properties.postal.toLowerCase();
-                                if (sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
-                                    return colorScale(+sightings[state].total);
-                                }
-                            }
-                            return "white";
+                        var countyName = d.properties["NAME"] + " County";
+                        if(sightings.hasOwnProperty(countyName)) {
+                            return colorScale(+sightings[countyName].total);
                         }
-                        return "none";
+                        else {
+                            return "GhostWhite";
+                        }
                     })
 
             }
