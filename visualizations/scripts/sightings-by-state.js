@@ -1,7 +1,7 @@
 d3.csv("..\\..\\data\\final-data.csv").then(
     function(dataset) {
         
-        d3.json("..\\..\\data\\us-state-geo.json").then(
+        d3.json("..\\..\\data\\us-state-2.geojson").then(
             function(mapdata){
                 // getting a list of all us states and the counts of that generalized shape per sighting
                 const validStates = ['al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga', 'hi', 'id', 'il', 
@@ -78,8 +78,9 @@ d3.csv("..\\..\\data\\final-data.csv").then(
 
                 var colorScale = d3.scaleLinear()
                     .domain([0, max])
-                    .range(["GhostWhite", "DarkBlue"]);
-
+                    .range(["GhostWhite", "DarkRed"]);
+                
+                console.log(mapdata);
                 var states = svg.append("g")
                     .selectAll(".state")
                     .data(mapdata.features)
@@ -88,17 +89,14 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .attr("class", "state")
                     .attr("d", d => pathGenerator(d))
                     .attr("fill", d => {
-                        if(d.properties.admin == "United States of America") {
-                            if (d.hasOwnProperty("properties") && d.properties.hasOwnProperty("postal") && d.properties.postal !== null) {
-                                var state = d.properties.postal.toLowerCase();
-                                if (sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
-                                    return colorScale(+sightings[state].total);
-                                }
-                            }
-                            return "white";
+                        var state = d.properties.STUSPS.toLowerCase();
+                        if(sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
+                            return colorScale(+sightings[state].total);
                         }
-                        return "none";
+                        return colorScale(0);
+                   
                     })
+
 
             }
         )
