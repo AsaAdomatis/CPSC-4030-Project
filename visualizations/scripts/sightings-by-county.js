@@ -38,8 +38,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
 
                 
                 var size = {
-                    width: 800,
-                    height: 800
+                    width: 600,
+                    height: 400
                 };
 
                 var svg = d3.select("#sightings-by-county")

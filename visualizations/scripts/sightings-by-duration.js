@@ -1,6 +1,6 @@
 d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
     var size = {
-        width: 800,
+        width: 400,
         height: 800,
         top: 10,
         bottom: 10,

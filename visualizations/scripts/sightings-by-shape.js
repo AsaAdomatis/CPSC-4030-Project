@@ -1,8 +1,8 @@
 d3.csv("..\\..\\data\\final-data.csv").then(
     function (dataset) {
         var dimensions = {
-            width: 100,
-            height: 100,
+            width: 400,
+            height: 400,
             margin: {
                 top: 10,
                 bottom: 50,
@@ -11,7 +11,10 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             }
         }
 
-        console.log(dataset)
+        var offset = {
+            x: dimensions.margin.left + 450,
+            y: dimensions.margin.bottom + 50
+        }
 
         var shapes = {}
         dataset.forEach(function (d) {
@@ -44,11 +47,14 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .domain([0, max])
             .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
 
-        console.log(shapes)
-
         //var colorScale = d3.scaleOrdinal()
         //    .domain(shapesKeys)
         //    .range(["#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#66a61e", "#e6ab02", "#a6761d", "#666666"])
+
+        var tooltip = d3.select("body").append("div")
+            .attr("id", "tooltip")
+            .style("position", "absolute")
+            .text("test")
 
         var bars = svg.append("g")
             .selectAll("g")
@@ -60,6 +66,28 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("width", xScale.bandwidth())
             .attr("height", d => (dimensions.height - dimensions.margin.bottom) - yScale(shapes[d]))
             .attr("fill", "steelblue")
+            .on("mouseover", function (d, i) {
+                d3.select(this)
+                    .attr("stroke", "black")
+                tooltip
+                    .style("visibility", "visible")
+                    .style("left", (xScale(i) + offset.x) + 'px')
+                    .style("top", (yScale(shapes[i]) + offset.y) + 'px')
+                    .text(`${shapes[i]}`)
+                    //console.log(svg)
+            })
+            .on("mouseout", function (d, i) {
+                d3.select(this)
+                    .attr("stroke", "none")
+                tooltip
+                    .style("visibility", "hidden")
+            })
+            .on("click", function () {
+                d3.selectAll("rect")
+                    .attr("fill", "skyblue")
+                d3.select(this)
+                    .attr("fill", "steelblue")
+            })
 
         var xAxis = d3.axisBottom(xScale)
             .tickFormat(function (d) { return d; })
