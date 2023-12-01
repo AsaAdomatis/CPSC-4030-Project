@@ -19,11 +19,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             if (d.dateTime.indexOf("/") != -1) {
                 return true;
             }
-            //console.log("NaN date time found")
             return
         })
-
-        //console.log(dataset)
 
         var svg = d3.select("#sightings-by-year")
             .attr("width", dimensions.width)
@@ -54,7 +51,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 max = count[d]
             }
         })
-        //console.log(countKeys)
 
         var xScale = d3.scaleLinear()
             .domain([firstTick, lastTick])

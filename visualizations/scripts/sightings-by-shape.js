@@ -11,8 +11,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             }
         }
 
-        console.log(dataset)
-
         var shapes = {}
         dataset.forEach(function (d) {
             if (shapes.hasOwnProperty(d.generalizedShape)) {
@@ -43,8 +41,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
         var yScale = d3.scaleLinear()
             .domain([0, max])
             .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
-
-        console.log(shapes)
 
         //var colorScale = d3.scaleOrdinal()
         //    .domain(shapesKeys)
