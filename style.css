@@ -3,8 +3,10 @@ center {
     justify-content: center;
 }
 
-img {
+svg {
     padding: 10px, 25px;
+    width: 100%;
+    height: auto;
 }
 
 left {
