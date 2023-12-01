@@ -1,8 +1,8 @@
 d3.csv("..\\..\\data\\final-data.csv").then(
     function (dataset) {
         var dimensions = {
-            width: 1000,
-            height: 800,
+            width: 100,
+            height: 100,
             margin: {
                 top: 10,
                 bottom: 50,
