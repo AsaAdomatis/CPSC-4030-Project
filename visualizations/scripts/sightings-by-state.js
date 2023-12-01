@@ -80,7 +80,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .domain([0, max])
                     .range(["GhostWhite", "DarkRed"]);
                 
-                console.log(mapdata);
                 var states = svg.append("g")
                     .selectAll(".state")
                     .data(mapdata.features)
