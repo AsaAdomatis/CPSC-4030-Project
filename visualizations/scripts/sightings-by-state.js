@@ -95,7 +95,21 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         return colorScale(0);
                    
                     })
+                    .on("mouseover", function (d, i) {
+                        d3.select(this)
+                            .attr("fill", "black")
+                    })
+                    .on("mouseout", function () {
+                        d3.selectAll(this)
+                            .attr("fill", d => {
+                                var state = d.properties.STUSPS.toLowerCase();
+                                if (sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
+                                    return colorScale(+sightings[state].total);
+                                }
+                                return colorScale(0);
 
+                            })
+                    })
 
             }
         )

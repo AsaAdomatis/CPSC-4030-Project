@@ -1,13 +1,18 @@
 d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
     var size = {
         width: 400,
-        height: 800,
+        height: 600,
         top: 10,
         bottom: 10,
         left: 150,
         right: 10
 
     };
+
+    var offset = {
+        x: 10,
+        y: 10
+    }
 
     var svg = d3.select("#sightings-by-duration")
         .attr("width", size.width + size.left + size.right)
@@ -70,4 +75,19 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
         .attr("y1", function(d){ return(y(d))} )
         .attr("y2", function(d){ return(y(d))} )
         .attr("stroke", "black");
+
+    var tooltip = d3.select("tooltip")
+
+    svg
+        .on("mouseover", function (d, i) {
+            tooltip
+                .style("visibility", "visible")
+                .style("left", `${d.x + offset.x}px`)
+                .style("top", `${d.y + offset.y}px`)
+                .html(`Min: ${min}<br/>Q1: ${q1}<br/>Median: ${median}<br/>Q3 ${q3}<br/>Max: ${max}`)
+        })
+        .on("mouseout", function () {
+            tooltip
+                .style("visibility", "hidden")
+        })
 })

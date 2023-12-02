@@ -5,7 +5,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             height: 400,
             margin: {
                 top: 10,
-                bottom: 50,
+                bottom: 75,
                 right: 10,
                 left: 75
             }
@@ -30,8 +30,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
         var svg = d3.select("#sightings-by-shape")
             .attr("width", dimensions.width)
             .attr("height", dimensions.height)
-
-        console.log(d3.select("body"))
 
         var xScale = d3.scaleBand()
             .domain(d3.map(dataset, d => d.generalizedShape))
@@ -61,6 +59,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("width", xScale.bandwidth())
             .attr("height", d => (dimensions.height - dimensions.margin.bottom) - yScale(shapes[d]))
             .attr("fill", "steelblue")
+            .attr("selected", false)
             .on("mouseover", function (d, i) {
                 d3.select(this)
                     .attr("stroke", "black")
@@ -77,10 +76,19 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .style("visibility", "hidden")
             })
             .on("click", function () {
-                d3.selectAll("rect")
-                    .attr("fill", "skyblue")
-                d3.select(this)
-                    .attr("fill", "steelblue")
+                if (this.getAttribute("selected") === "true") {
+                    d3.selectAll("rect")
+                        .attr("fill", "steelblue")
+                        .attr("selected", false)
+                }
+                else {
+                    d3.selectAll("rect")
+                        .attr("fill", "skyblue")
+                        .attr("selected", false)
+                    d3.select(this)
+                        .attr("fill", "steelblue")
+                        .attr("selected", true)
+                }
             })
 
         var xAxis = d3.axisBottom(xScale)

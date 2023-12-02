@@ -5,7 +5,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             height: 400,
             margin:{
                 top: 10,
-                bottom: 50,
+                bottom: 60,
                 right: 10,
                 left: 75
             }
@@ -69,6 +69,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .domain([0, max])
             .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
 
+        var tooltip = d3.select("tooltip")
+
         var line = d3.line()
             .x(function (d) {
                 return xScale(d)
@@ -85,39 +87,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
             .attr("d", line(countKeys))
-
-        svg.selectAll("circles")
-            .data(countKeys)
-            .enter()
-            .append("circle")
-            .attr("transform", "translate(" + -dimensions.margin.left + ",0)")
-            .attr("fill", "black")
-            .attr("stroke", "none")
-            .attr("cx", function (d) { return xScale(d) })
-            .attr("cy", function (d) { return yScale(count[d]) })
-            .attr("r", 1.5)
-            .on("mouseover", function (d, i) {
-                d3.select(this)
-                    .attr("r", 3)
-                tooltip
-                    .style("visibility", "visible")
-                    .style("left", `${d.x + offset.x}px`)
-                    .style("top", `${d.y + offset.y}px`)
-                    .text(`${1}`)
-                console.log(i)
-            })
-            .on("mouseout", function (d, i) {
-                d3.select(this)
-                    .attr("r", 1.5)
-                tooltip
-                    .style("visibility", "hidden")
-            })
-            .on("click", function () {
-                d3.selectAll("circles")
-                    .attr("fill", "gray")
-                d3.select(this)
-                    .attr("fill", "black")
-            })
 
         var xTickValues = []
         for (var i = firstTick; i <= lastTick; i += tickSpacing) {
@@ -153,5 +122,47 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("x", dimensions.width / 2)
             .attr("y", dimensions.height - dimensions.margin.top)
             .text("Years")
+
+        svg.selectAll("circles")
+            .data(countKeys)
+            .enter()
+            .append("circle")
+            .attr("transform", "translate(" + -dimensions.margin.left + ",0)")
+            .attr("fill", "black")
+            .attr("stroke", "none")
+            .attr("cx", function (d) { return xScale(d) })
+            .attr("cy", function (d) { return yScale(count[d]) })
+            .attr("r", 2)
+            .attr("selected", false)
+            .on("mouseover", function (d, i) {
+                d3.select(this)
+                    .attr("r", 10)
+                tooltip
+                    .style("visibility", "visible")
+                    .style("left", `${d.x + offset.x}px`)
+                    .style("top", `${d.y + offset.y}px`)
+                    .text(`${i}: ${count[i]}`)
+            })
+            .on("mouseout", function (d, i) {
+                d3.select(this)
+                    .attr("r", 2)
+                tooltip
+                    .style("visibility", "hidden")
+            })
+            .on("click", function () {
+                if (this.getAttribute("selected") === "true") {
+                    d3.selectAll("circle")
+                        .attr("fill", "black")
+                        .attr("selected", false)
+                }
+                else {
+                    d3.selectAll("circle")
+                        .attr("fill", "gray")
+                        .attr("selected", false)
+                    d3.select(this)
+                        .attr("fill", "black")
+                        .attr("selected", true)
+                }
+            })
 	}
 )
