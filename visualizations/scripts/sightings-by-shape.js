@@ -92,10 +92,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .style("visibility", "hidden")
             })
             .on("click", function (d, i) {
-                //Filters.input({shape: i})
-                transitionShape(dataset.filter(function (d) {
-                    return d.state == "ca"
-                }))
+                Filters.input({shape: i})
                 if (this.getAttribute("selected") === "true") {
                     d3.select(this)
                         .attr("fill", "steelblue")

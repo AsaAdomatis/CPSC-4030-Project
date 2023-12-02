@@ -48,9 +48,47 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
         y: 10
     };
 
+    var boxFeatures = {
+        center: 200,
+        width: 100
+    };
+
+    // let selection = {
+    //     startX: undefined,
+    //     startY: undefined,
+    //     endX: undefined,
+    //     endY: undefined,
+    //     active: false
+    // }
+
     var svg = d3.select("#sightings-by-duration")
         .attr("width", size.width + size.left + size.right)
-        .attr("height", size.height + size.top + size.bottom);
+        .attr("height", size.height + size.top + size.bottom)
+        .attr("selecting", false)
+        // .on("mousedown", d => {
+        //     console.log(`start x:${d.x} start y:${d.y}`);
+        //     selection.startX = d.x;
+        //     selection.startY = d.y;
+        //     selection.active = true;
+        // })
+        // .on("mouseover", d => {
+        //     if(selection.active) {
+        //         console.log("yippee!");
+        //         d3.select(this)
+        //             .attr("x", boxFeatures.center - boxFeatures.width/2 + size.left)
+        //             .attr("y", sbd.y(selection.startY) )
+        //             .attr("height", (sbd.y(d.y)-sbd.y(selection.startY)) )
+        //             .attr("width", boxFeatures.width)
+        //             .style("fill", "#69b3a2")
+        //             .attr("opacity", "0.5");
+        //     }
+        // })
+        // .on("mouseup", d=> {
+        //     console.log(`end x:${d.x} end y:${d.y}`);
+        //     selection.endX = d.x;
+        //     selection.endY = d.y;
+        //     selection.active = false;
+        // });
 
     var data_sorted = data.sort(d3.ascending);
     var q1 = d3.quantile(data_sorted, .25, d => +d.duration);
@@ -77,12 +115,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
         .each(function(d, i){
             d3.select(this).style("font-size", "16px");
         });
-
-    // a few features for the box
-    var boxFeatures = {
-        center: 200,
-        width: 100
-    };
     
     // Show the main vertical line
     sbd.spine = svg.append("line")
