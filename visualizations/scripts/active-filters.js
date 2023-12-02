@@ -42,7 +42,12 @@ var Filters = {
         let newStateData = this.applyFilters(this.original, 'state');
         transitionState(newStateData);
         let newShapeData = this.applyFilters(this.original, 'shape');
-        transitionShape(newShapeData);
+        try {
+            transitionShape(newShapeData);
+        }
+        catch(error) {
+            console.error(error);
+        }
         let newYearData = this.applyFilters(this.original, 'year');
 
         let newDurationData = this.applyFilters(this.original, 'all');
