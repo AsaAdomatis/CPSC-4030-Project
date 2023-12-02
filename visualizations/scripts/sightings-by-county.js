@@ -2,12 +2,27 @@ var sbc = {
     counties: undefined,
     colorScale: undefined,
     group: undefined,
+    data: undefined,
 
-    count(county) {
-        if(this.group.has(county)) {
-            return this.group.get(county).length;
+    count(county, state) {
+        if (state === undefined) {
+            if(this.group.has(county)) {
+                return this.group.get(county).length;
+            }
+            return 0;
         }
-        return 0;
+        else {
+            if(this.group.has(county)) {
+                let arr = this.data.filter(d => d.state === state);
+                let g = d3.group(arr, d => d.county);
+                if (g.has(county)) {
+                    return g.get(county).length 
+                }
+                return 0;
+            }
+            return 0;
+        }
+
     },
 
     fips: [
@@ -27,15 +42,15 @@ var sbc = {
 }
 
 function transitionCounty(data) {
+    sbc.data = data;
     // setting data up
     sbc.group = d3.group(data, d => d.county);
-
     sbc.counties.transition()
         .attr("fill", d => {
             let state = sbc.convertFIPS(d.properties["STATE"]);
             if (Filters.stateFilter.length == 0 || Filters.stateFilter.includes(state)) {
                 var countyName = d.properties["NAME"] + " County";
-                return sbc.colorScale(sbc.count(countyName));       
+                return sbc.colorScale(sbc.count(countyName, state));       
             }
             return sbc.colorScale(0);  
         })
@@ -45,8 +60,9 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
     d3.json("..\\..\\data\\us-counties-geo.json").then(function(mapdata){
         // getting a list of all us states and the counts of that generalized shape per sighting
         dataset = Filters.filterBadDates(dataset);
+        sbc.data = dataset;
         sbc.group = d3.group(dataset, d => d.county);
-  
+
         var size = {
             width: 800,
             height: 800
@@ -91,7 +107,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
                 let state = sbc.convertFIPS(d.properties["STATE"]);
                 if (Filters.stateFilter.length == 0 || Filters.stateFilter.includes(state)) {
                     var countyName = d.properties["NAME"] + " County";
-                    return sbc.colorScale(sbc.count(countyName));       
+                    return sbc.colorScale(sbc.count(countyName, state));       
                 }
                 return sbc.colorScale(0);           
             })
@@ -99,11 +115,12 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
                 d3.select(this)
                     .attr("stroke", "black");
                 var countyName = i.properties["NAME"] + " County";
+                let state = sbc.convertFIPS(i.properties["STATE"]);
                 tooltip
                     .style("visibility", "visible")
                     .style("left", `${d.x + offset.x}px`)
                     .style("top", `${d.y + offset.y}px`)
-                    .text(`${countyName}: ${sbc.count(countyName)}`);
+                    .text(`${countyName}: ${sbc.count(countyName, state)}`);
             })
             .on("mouseout", function () {
                 d3.select(this)
