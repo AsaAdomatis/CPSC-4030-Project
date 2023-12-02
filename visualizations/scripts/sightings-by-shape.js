@@ -1,63 +1,93 @@
-d3.csv("..\\..\\data\\final-data.csv").then(
-    function (dataset) {
-        var dimensions = {
-            width: 400,
-            height: 400,
-            margin: {
-                top: 10,
-                bottom: 75,
-                right: 10,
-                left: 75
+var sbs = {
+    bars: undefined,
+    shapes: undefined,
+    shapeKeys: undefined,
+    xScale: undefined,
+    yScale: undefined
+}
+
+var dimensions = {
+    width: 400,
+    height: 400,
+    margin: {
+        top: 10,
+        bottom: 75,
+        right: 10,
+        left: 75
+    }
+}
+
+var offset = {
+    x: 10,
+    y: 10
+}
+
+function transitionShape(data) {
+    sbs.shapes = d3.group(data, function(d) {
+        return d.generalizedShape
+    })
+
+    sbs.bars.transition()
+        .attr("y", d => {
+            if (sbs.shapes.has(d)) {
+                return sbs.yScale(sbs.shapes.get(d).length);
+            }             
+            else {
+                return sbs.yScale(0);
             }
-        }
-
-        var offset = {
-            x: 10,
-            y: 10
-        }
-
-        var shapes = {}
-        dataset.forEach(function (d) {
-            if (shapes.hasOwnProperty(d.generalizedShape)) {
-                shapes[d.generalizedShape]++
+            
+        })
+        .attr("height", d => {
+            if (sbs.shapes.has(d)) {
+                return (dimensions.height - dimensions.margin.bottom) - sbs.yScale(sbs.shapes.get(d).length);
             }
             else {
-                shapes[d.generalizedShape] = 1
-            }
+                return 0;
+            }          
         })
-        var shapesKeys = Object.keys(shapes)
+}
+
+d3.csv("..\\..\\data\\final-data.csv").then(
+    function (dataset) {
+
+        dataset = Filters.filterBadDates(dataset)
+        
+        sbs.shapes = d3.group(dataset, function(d) {
+            return d.generalizedShape
+        })
+        sbs.shapesKeys = Array.from(sbs.shapes.keys())
 
         var svg = d3.select("#sightings-by-shape")
             .attr("width", dimensions.width)
             .attr("height", dimensions.height)
 
-        var xScale = d3.scaleBand()
+        sbs.xScale = d3.scaleBand()
             .domain(d3.map(dataset, d => d.generalizedShape))
             .range([dimensions.margin.left, dimensions.width - dimensions.margin.right])
             .padding([0.2])
 
         var max = 0;
-        shapesKeys.forEach(function (key) {
-            if (shapes[key] > max) {
-                max = shapes[key]
+        sbs.shapes.forEach(function (shape) {
+            if (shape.length > max) {
+                max = shape.length
             }
         })
 
-        var yScale = d3.scaleLinear()
+        sbs.yScale = d3.scaleLinear()
             .domain([0, max])
             .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
 
         var tooltip = d3.select("tooltip")
 
-        var bars = svg.append("g")
+        sbs.bars = svg.append("g")
             .selectAll("g")
-            .data(shapesKeys)
+            .data(sbs.shapesKeys)
             .enter()
             .append("rect")
-            .attr("x", d => xScale(d))
-            .attr("y", d => yScale(shapes[d]))
-            .attr("width", xScale.bandwidth())
-            .attr("height", d => (dimensions.height - dimensions.margin.bottom) - yScale(shapes[d]))
+            .attr("x", d => sbs.xScale(d))
+            .attr("y", d => sbs.yScale(sbs.shapes.get(d).length))
+            .attr("width", sbs.xScale.bandwidth())
+            .attr("height", d => (dimensions.height - dimensions.margin.bottom) - sbs.yScale(sbs.shapes.get(d).length))
             .attr("fill", "steelblue")
             .attr("selected", false)
             .on("mouseover", function (d, i) {
@@ -67,7 +97,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .style("visibility", "visible")
                     .style("left", `${d.x + offset.x}px`)
                     .style("top", `${d.y + offset.y}px`)
-                    .text(`${shapes[i]}`)
+                    .text(`${sbs.shapes.get(i).length}`)
             })
             .on("mouseout", function () {
                 d3.select(this)
@@ -75,7 +105,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 tooltip
                     .style("visibility", "hidden")
             })
-            .on("click", function () {
+            .on("click", function (d, i) {
+                Filters.input({shape: i})
                 if (this.getAttribute("selected") === "true") {
                     d3.select(this)
                         .attr("fill", "steelblue")
@@ -88,10 +119,10 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 }
             })
 
-        var xAxis = d3.axisBottom(xScale)
+        var xAxis = d3.axisBottom(sbs.xScale)
             .tickFormat(function (d) { return d; })
 
-        var yAxis = d3.axisLeft(yScale)
+        var yAxis = d3.axisLeft(sbs.yScale)
 
         svg.append("g")
             .attr("class", "x-axis")
