@@ -1,3 +1,39 @@
+var sbd = {
+    spine: undefined,
+    box: undefined,
+    horizontals: undefined,
+    y: undefined
+}
+
+function transitionDuration(data) {
+    // getting num sum stats
+    let lineValues = [];
+    var data_sorted = data.sort(d3.ascending);
+    var q1 = d3.quantile(data_sorted, .25, d => +d.duration);
+    lineValues[1] = d3.quantile(data_sorted, .5, d => +d.duration);
+    var q3 = d3.quantile(data_sorted, .75, d => +d.duration);
+    var interQuantileRange = q3 - q1;
+    lineValues[0] = d3.min(data, d => +d.duration);
+    lineValues[2] = d3.max(data, d => +d.duration);
+
+    // transition spine
+    sbd.spine.transition()
+        .attr("y1", sbd.y(lineValues[0]))
+        .attr("y2", sbd.y(lineValues[2]));
+
+    // transition box
+    sbd.box.transition()
+        .attr("y", sbd.y(q3) )
+        .attr("height", (sbd.y(q1)-sbd.y(q3)));
+
+    // transition lines
+    console.log(sbd.horizontals)
+    let iterator = 0;
+    sbd.horizontals.transition()
+        .attr("y1", function(d, i){ return(sbd.y(lineValues[i]))} )
+        .attr("y2", function(d, i){ return(sbd.y(lineValues[i]))} )
+}
+
 d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
     var size = {
         width: 400,
@@ -12,7 +48,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
     var offset = {
         x: 10,
         y: 10
-    }
+    };
 
     var svg = d3.select("#sightings-by-duration")
         .attr("width", size.width + size.left + size.right)
@@ -27,12 +63,12 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
     var max = d3.max(data, d => +d.duration);
 
     // Show the Y scale
-    var y = d3.scaleLog()
+    sbd.y = d3.scaleLog()
         .domain([min, (max * 100)])
         .range([size.height - size.bottom, size.top])
         .base(2);
-    // svg.call(d3.axisLeft(y))
-    var yAxis = d3.axisLeft(y);
+
+    var yAxis = d3.axisLeft(sbd.y);
     svg.append("g")
             .attr("class", "y-axis")
             .attr("transform", "translate(" + size.left + ",0)")
@@ -49,31 +85,31 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
     };
     
     // Show the main vertical line
-    svg.append("line")
+    sbd.spine = svg.append("line")
         .attr("x1", boxFeatures.center + size.left)
         .attr("x2", boxFeatures.center + size.left)
-        .attr("y1", y(min))
-        .attr("y2", y(max) )
+        .attr("y1", sbd.y(min))
+        .attr("y2", sbd.y(max))
         .attr("stroke", "black")
     
     // Show the box
-    svg.append("rect")
+    sbd.box = svg.append("rect")
         .attr("x", boxFeatures.center - boxFeatures.width/2 + size.left)
-        .attr("y", y(q3) )
-        .attr("height", (y(q1)-y(q3)) )
+        .attr("y", sbd.y(q3) )
+        .attr("height", (sbd.y(q1)-sbd.y(q3)) )
         .attr("width", boxFeatures.width)
         .attr("stroke", "black")
         .style("fill", "#69b3a2")
     
     // show median, min and max horizontal lines
-    svg.selectAll("toto")
+    sbd.horizontals = svg.selectAll("toto")
         .data([min, median, max])
         .enter()
         .append("line")
         .attr("x1", boxFeatures.center-boxFeatures.width/2  + size.left)
         .attr("x2", boxFeatures.center+boxFeatures.width/2 + size.left)
-        .attr("y1", function(d){ return(y(d))} )
-        .attr("y2", function(d){ return(y(d))} )
+        .attr("y1", function(d){ return(sbd.y(d))} )
+        .attr("y2", function(d){ return(sbd.y(d))} )
         .attr("stroke", "black");
 
     var tooltip = d3.select("tooltip")
@@ -84,7 +120,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
                 .style("visibility", "visible")
                 .style("left", `${d.x + offset.x}px`)
                 .style("top", `${d.y + offset.y}px`)
-                .html(`Min: ${min}<br/>Q1: ${q1}<br/>Median: ${median}<br/>Q3 ${q3}<br/>Max: ${max}`)
+                .html(`Min: ${min}<br/>Q1: ${q1}<br/>Median: ${median}<br/>Q3: ${q3}<br/>Max: ${max}`)
         })
         .on("mouseout", function () {
             tooltip

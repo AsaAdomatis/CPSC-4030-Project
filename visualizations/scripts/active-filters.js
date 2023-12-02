@@ -38,17 +38,15 @@ var Filters = {
             }
         }
 
-        this.printFilters();
-
         // do transitions
         let newStateData = this.applyFilters(this.original, 'state');
         transitionState(newStateData);
         let newShapeData = this.applyFilters(this.original, 'shape');
-        console.log(newShapeData);
         transitionShape(newShapeData);
         let newYearData = this.applyFilters(this.original, 'year');
 
         let newDurationData = this.applyFilters(this.original, 'all');
+        transitionDuration(newDurationData);
     },
 
     filterBadDates(data) {
