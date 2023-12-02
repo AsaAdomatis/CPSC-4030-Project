@@ -1,5 +1,4 @@
-d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
-        
+d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {    
     d3.json("..\\..\\data\\us-counties-geo.json").then(function(mapdata){
         // getting a list of all us states and the counts of that generalized shape per sighting
         const validStates = ['al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga', 'hi', 'id', 'il', 
@@ -40,13 +39,17 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
             height: 800
         };
 
+        var offset = {
+            x: 10,
+            y: 10
+        };
+
         var svg = d3.select("#sightings-by-county")
             .attr("width", size.width)
             .attr("height", size.height);
 
         var projection = d3.geoAlbersUsa()
             .fitWidth(size.width, {type: "Sphere"})
-            // .rotate([100, 0, 0]);
 
         var pathGenerator = d3.geoPath(projection);
 
@@ -55,11 +58,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
             .attr("d", pathGenerator({type: "Sphere"}))
             .attr("fill", "white");
 
-        // drawing lat long lines
-        // var graticule = svg.append("path")
-        //     .attr("d", pathGenerator(d3.geoGraticule10()))
-        //     .attr("stroke", "gray")
-        //     .attr("fill", "none");
         var max = 0;
         Object.keys(sightings).forEach(function(key, index) {
             if (sightings[key].total > max) {                        
@@ -71,6 +69,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
         var colorScale = d3.scaleThreshold()
             .domain(thresholds)
             .range(d3.schemePuBu[thresholds.length]);
+
+        var tooltip = d3.select("tooltip")
 
         var counties = svg.append("g")
             .selectAll(".county")
@@ -88,10 +88,27 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
                     return "GhostWhite";
                 }
             })
-            .on('click', function() {
-                
-            });
-        
-
+            .on("mouseover", function (d, i) {
+                d3.select(this)
+                    .attr("stroke", "black")
+                var countyName = i.properties["NAME"] + " County"
+                var total = 0
+                if (sightings.hasOwnProperty(countyName)) {
+                    total = +sightings[countyName].total
+                }
+                tooltip
+                    .style("visibility", "visible")
+                    .style("left", `${d.x + offset.x}px`)
+                    .style("top", `${d.y + offset.y}px`)
+                    .text(`${countyName}: ${total}`)
+            })
+            .on("mouseout", function () {
+                d3.select(this)
+                    .attr("stroke", "none")
+                tooltip
+                    .style("visibility", "hidden")
+            })
+            .on('click', function() {});
+         
     })
 })

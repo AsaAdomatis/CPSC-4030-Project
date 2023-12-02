@@ -1,10 +1,11 @@
 center {
     text-align: center;
+    display: block;
     justify-content: center;
 }
 
 svg {
-    padding: 10px, 25px;
+    /*padding: 10px 25px;*/
     width: 100%;
     height: auto;
 }
@@ -31,3 +32,23 @@ container {
     align-items: center;
     justify-content: center;
 }
+
+vertical {
+    flex-direction: column;
+}
+
+horizontal {
+
+}
+
+/*tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: #000;
+    visibility: hidden;
+    width: 1000px;
+    height: 1000px;
+    color: #fff;
+    text-align: center;
+    font-size: 72px;
+}*/

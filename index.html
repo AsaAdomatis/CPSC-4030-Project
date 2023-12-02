@@ -14,15 +14,29 @@
             <hr>
 
             <container>
-                <div>
-                    <svg id="sightings-by-county"></svg>
-                    <script src="visualizations/scripts/sightings-by-county.js"></script>
-                </div>
-            </container>
 
-            <hr>
+                <vertical>
+                    <div>
+                        <svg id="sightings-by-county"></svg>
+                        <script src="visualizations/scripts/sightings-by-county.js"></script>
+                    </div>
+                    <div>
+                        <svg id="sightings-by-state"></svg>
+                        <script src="visualizations/scripts/sightings-by-state.js"></script>
+                    </div>
+                </vertical>
 
-            <container>
+                <vertical>
+                    <div>
+                        <svg id="sightings-by-shape"></svg>
+                        <script src="visualizations/scripts/sightings-by-shape.js"></script>
+                    </div>
+                    <div>
+                        <svg id="sightings-by-year"></svg>
+                        <script src="visualizations/scripts/sightings-by-year.js"></script>
+                    </div>
+                </vertical>
+
                 <div>
                     <svg id="sightings-by-duration"></svg>
                     <script src="visualizations/scripts/sightings-by-duration.js"></script>
@@ -31,34 +45,21 @@
 
             <hr>
 
-            <container>
-                <div>
-                    <svg id="sightings-by-shape"></svg>
-                    <script src="visualizations/scripts/sightings-by-shape.js"></script>
-                </div>
-            </container>
-
-            <hr>
-
-            <container>
-                <div>
-                    <svg id="sightings-by-state"></svg>
-                    <script src="visualizations/scripts/sightings-by-state.js"></script>
-                </div>
-            </container>
-
-            <hr>
-
-            <container>
-                <div>
-                    <svg id="sightings-by-year"></svg>
-                    <script src="visualizations/scripts/sightings-by-year.js"></script>
-                </div>
-            </container>
-
-            <hr>
-
             <p>Asa Adomatis, Ellie Painter, Emily Wilber</p>
         </center>
+
+        <tooltip style="
+                position: absolute; 
+                pointer-events: none; 
+                visibility: hidden; 
+                border-style: solid;
+                border-width: 1px;
+                border-color: black;
+                background-color: lightsteelblue;
+                color: black;
+                text-align: center; 
+                font-size: 20px; 
+            ">
+        </tooltip>
     </body>
 </html>
