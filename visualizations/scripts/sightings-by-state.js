@@ -121,9 +121,11 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         return sbt.colorScale(0);
                    
                     })
+                    .attr("selected", false)
+                    .attr("stroke-width", "3px")
                     .on("mouseover", function (d, i) {
-                        d3.select(this)
-                            .attr("stroke", "black")
+                        // d3.select(this)
+                        //     .attr("stroke", "black")
                         var state = i.properties.STUSPS.toLowerCase();
                         var total = 0
                         if (sightings.hasOwnProperty(state)) {
@@ -136,34 +138,24 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                             .text(`${i.properties.STUSPS}: ${total}`)
                     })
                     .on("mouseout", function () {
-                        d3.select(this)
-                            .attr("stroke", "none")
+                        // d3.select(this)
+                        //     .attr("stroke", "none")
                         tooltip
                             .style("visibility", "hidden")
                     })
                     .on("click", function() {
-                        // resetting others visuals
-                        d3.selectAll(".state")
-                            .attr("fill", d => {
-                                var state = d.properties.STUSPS.toLowerCase();
-                                if(sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
-                                    return sbt.colorScale(+sightings[state].total);
-                                }
-                                return sbt.colorScale(0);
-                            })
-                            .attr("stroke", d => {
-                                // setting color
-                                   return "none";
-                               });
-                        
-                        // setting selections visuals
-                        d3.select(this)
-                            .attr("stroke", d => {
-                                return "steelblue";
-                            })
-                            .attr("stroke-width", "2px");
-                        
-                            
+                        // running selection
+                        Filters.input({state: this.__data__.properties.STUSPS.toLowerCase()});
+                        if (this.getAttribute("selected") === "true") {
+                            d3.select(this)
+                                .attr("stroke", "none")
+                                .attr("selected", false)
+                        }
+                        else {                        
+                            d3.select(this)
+                                .attr("stroke", "steelblue")
+                                .attr("selected", true)
+                        }
                     })
             }
         )

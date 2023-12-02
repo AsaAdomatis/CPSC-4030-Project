@@ -38,10 +38,17 @@ var Filters = {
             }
         }
 
+        this.printFilters();
+
         // do transitions
         let newStateData = this.applyFilters(this.original, 'state');
         transitionState(newStateData);
+        let newShapeData = this.applyFilters(this.original, 'shape');
+        console.log(newShapeData);
+        transitionShape(newShapeData);
+        let newYearData = this.applyFilters(this.original, 'year');
 
+        let newDurationData = this.applyFilters(this.original, 'all');
     },
 
     filterBadDates(data) {
@@ -95,11 +102,11 @@ var Filters = {
         let filteredData = this.filterBadDates(data);
         filteredData = filteredData.filter(d => {
             // filtering by general shape
-            if (this.shapeFilter.length !== 0 && skip !== 'shape' && !(d.hasOwnProperty("generalizedShape") && this.shapeFilter.includes(d.generalizedShape))) {
+            if (this.shapeFilter.length !== 0 && skip !== 'shape' && !this.shapeFilter.includes(d.generalizedShape)) {
                 return false;
             }
             // filter by state
-            if (this.stateFilter.length !== 0 && skip !== 'state' && !(d.hasOwnProperty("state")) && this.stateFilter.includes(d.state)) {
+            if (this.stateFilter.length !== 0 && skip !== 'state' && !this.stateFilter.includes(d.state)) {
                 return false;
             }
             // filter by year
