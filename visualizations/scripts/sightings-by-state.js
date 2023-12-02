@@ -106,11 +106,15 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         d3.select(this)
                             .attr("stroke", "black")
                         var state = i.properties.STUSPS.toLowerCase();
+                        var total = 0
+                        if (sightings.hasOwnProperty(state)) {
+                            total = +sightings[state].total
+                        }
                         tooltip
                             .style("visibility", "visible")
                             .style("left", `${d.x + offset.x}px`)
                             .style("top", `${d.y + offset.y}px`)
-                            .text(`${i.properties.STUSPS}: ${+sightings[state].total}`)
+                            .text(`${i.properties.STUSPS}: ${total}`)
                     })
                     .on("mouseout", function () {
                         d3.select(this)

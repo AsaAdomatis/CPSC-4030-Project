@@ -101,11 +101,15 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         d3.select(this)
                             .attr("stroke", "black")
                         var countyName = i.properties["NAME"] + " County"
+                        var total = 0
+                        if (sightings.hasOwnProperty(countyName)) {
+                            total = +sightings[countyName].total
+                        }
                         tooltip
                             .style("visibility", "visible")
                             .style("left", `${d.x + offset.x}px`)
                             .style("top", `${d.y + offset.y}px`)
-                            .text(`${countyName}: ${+sightings[countyName].total}`)
+                            .text(`${countyName}: ${total}`)
                     })
                     .on("mouseout", function () {
                         d3.select(this)
