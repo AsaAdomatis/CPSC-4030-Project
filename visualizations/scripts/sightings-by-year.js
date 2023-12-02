@@ -1,14 +1,19 @@
 d3.csv("..\\..\\data\\final-data.csv").then(
 	function(dataset){
 		var dimensions = {
-            width: 1000,
-            height: 800,
+            width: 400,
+            height: 400,
             margin:{
                 top: 10,
-                bottom: 50,
+                bottom: 60,
                 right: 10,
                 left: 75
             }
+        }
+
+        var offset = {
+            x: 10,
+            y: 10
         }
 
         var tickSpacing = 5
@@ -60,16 +65,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .domain([0, max])
             .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
 
-        svg.selectAll("circles")
-            .data(countKeys)
-            .enter()
-            .append("circle")
-            .attr("transform", "translate(" + -dimensions.margin.left + ",0)")
-            .attr("fill", "black")
-            .attr("stroke", "none")
-            .attr("cx", function (d) { return xScale(d) })
-            .attr("cy", function (d) { return yScale(count[d]) })
-            .attr("r", 1.5)
+        var tooltip = d3.select("tooltip")
 
         var line = d3.line()
             .x(function (d) {
@@ -122,5 +118,52 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("x", dimensions.width / 2)
             .attr("y", dimensions.height - dimensions.margin.top)
             .text("Years")
+
+        svg.selectAll("circles")
+            .data(countKeys)
+            .enter()
+            .append("circle")
+            .attr("transform", "translate(" + -dimensions.margin.left + ",0)")
+            .attr("fill", "black")
+            .attr("stroke", "none")
+            .attr("cx", function (d) { return xScale(d) })
+            .attr("cy", function (d) { return yScale(count[d]) })
+            .attr("r", 2)
+            .attr("selected", false)
+            .on("mouseover", function (d, i) {
+                d3.select(this)
+                    .attr("r", 10)
+                tooltip
+                    .style("visibility", "visible")
+                    .style("left", `${d.x + offset.x}px`)
+                    .style("top", `${d.y + offset.y}px`)
+                    .text(`${i}: ${count[i]}`)
+            })
+            .on("mouseout", function () {
+                if (this.getAttribute("selected") === "true") {
+                    d3.select(this)
+                        .attr("r", 3)
+                }
+                else {
+                    d3.select(this)
+                        .attr("r", 2)
+                }
+                tooltip
+                    .style("visibility", "hidden")
+            })
+            .on("click", function () {
+                if (this.getAttribute("selected") === "true") {
+                    d3.select(this)
+                        .attr("fill", "black")
+                        .attr("r", 2)
+                        .attr("selected", false)
+                }
+                else {
+                    d3.select(this)
+                        .attr("fill", "red")
+                        .attr("r", 3)
+                        .attr("selected", true)
+                }
+            })
 	}
 )

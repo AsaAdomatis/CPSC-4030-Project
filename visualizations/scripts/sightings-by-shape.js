@@ -1,14 +1,19 @@
 d3.csv("..\\..\\data\\final-data.csv").then(
     function (dataset) {
         var dimensions = {
-            width: 1000,
-            height: 800,
+            width: 400,
+            height: 400,
             margin: {
                 top: 10,
-                bottom: 50,
+                bottom: 75,
                 right: 10,
                 left: 75
             }
+        }
+
+        var offset = {
+            x: 10,
+            y: 10
         }
 
         var shapes = {}
@@ -42,9 +47,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .domain([0, max])
             .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
 
-        //var colorScale = d3.scaleOrdinal()
-        //    .domain(shapesKeys)
-        //    .range(["#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#66a61e", "#e6ab02", "#a6761d", "#666666"])
+        var tooltip = d3.select("tooltip")
 
         var bars = svg.append("g")
             .selectAll("g")
@@ -56,10 +59,37 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("width", xScale.bandwidth())
             .attr("height", d => (dimensions.height - dimensions.margin.bottom) - yScale(shapes[d]))
             .attr("fill", "steelblue")
+            .attr("selected", false)
+            .on("mouseover", function (d, i) {
+                d3.select(this)
+                    .attr("stroke", "black")
+                tooltip
+                    .style("visibility", "visible")
+                    .style("left", `${d.x + offset.x}px`)
+                    .style("top", `${d.y + offset.y}px`)
+                    .text(`${shapes[i]}`)
+            })
+            .on("mouseout", function () {
+                d3.select(this)
+                    .attr("stroke", "none")
+                tooltip
+                    .style("visibility", "hidden")
+            })
+            .on("click", function () {
+                if (this.getAttribute("selected") === "true") {
+                    d3.select(this)
+                        .attr("fill", "steelblue")
+                        .attr("selected", false)
+                }
+                else {
+                    d3.select(this)
+                        .attr("fill", "midnightblue")
+                        .attr("selected", true)
+                }
+            })
 
         var xAxis = d3.axisBottom(xScale)
             .tickFormat(function (d) { return d; })
-            //.tickValues(tickValues)
 
         var yAxis = d3.axisLeft(yScale)
 

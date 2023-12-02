@@ -44,9 +44,14 @@ d3.csv("..\\..\\data\\final-data.csv").then(
 
                 
                 var size = {
-                    width: 800,
-                    height: 800
+                    width: 600,
+                    height: 400
                 };
+
+                var offset = {
+                    x: 10,
+                    y: 10
+                }
 
                 var svg = d3.select("#sightings-by-state")
                     .attr("width", size.width)
@@ -79,6 +84,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 var colorScale = d3.scaleLinear()
                     .domain([0, max])
                     .range(["GhostWhite", "DarkRed"]);
+
+                var tooltip = d3.select("tooltip")
                 
                 var states = svg.append("g")
                     .selectAll(".state")
@@ -94,6 +101,26 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         }
                         return colorScale(0);
                    
+                    })
+                    .on("mouseover", function (d, i) {
+                        d3.select(this)
+                            .attr("stroke", "black")
+                        var state = i.properties.STUSPS.toLowerCase();
+                        var total = 0
+                        if (sightings.hasOwnProperty(state)) {
+                            total = +sightings[state].total
+                        }
+                        tooltip
+                            .style("visibility", "visible")
+                            .style("left", `${d.x + offset.x}px`)
+                            .style("top", `${d.y + offset.y}px`)
+                            .text(`${i.properties.STUSPS}: ${total}`)
+                    })
+                    .on("mouseout", function () {
+                        d3.select(this)
+                            .attr("stroke", "none")
+                        tooltip
+                            .style("visibility", "hidden")
                     })
                     .on("click", function() {
                         // resetting others visuals
