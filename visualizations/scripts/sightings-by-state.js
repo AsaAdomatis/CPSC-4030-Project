@@ -1,9 +1,15 @@
 var sbt = {
     states: undefined,
     colorScale: undefined,
-    group: undefined
-}
+    group: undefined,
 
+    count(state) {
+        if(this.group.has(state)) {
+            return this.group.get(state).length;
+        }
+        return 0;
+    }
+}
 function transitionState(data) {
     // setting data up
     sbt.group = d3.group(data, d => d.state);
@@ -23,44 +29,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
         
         d3.json("..\\..\\data\\us-state-2.geojson").then(
             function(mapdata){
-                // // getting a list of all us states and the counts of that generalized shape per sighting
-                // const validStates = ['al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga', 'hi', 'id', 'il', 
-                // 'in', 'ia', 'ks', 'ky', 'la', 'me', 'md', 'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 
-                // 'nj', 'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', 'ri', 'sc', 'sd', 'tn', 'tx', 'ut', 'vt', 
-                // 'va', 'wa', 'wv', 'wi', 'wy'];
-                // var sightings = {};
-                // dataset.forEach(d => {
-                //     var state = d["state"];
-                //     var shape = d["generalizedShape"];
-                //     if (validStates.includes(state)) {
-                //         if (state == "") 
-                //             state = "misc";
-
-                //         if (sightings.hasOwnProperty(state)) {
-                //             // has state and shape
-                //             if (sightings[state].hasOwnProperty(shape)) {
-                //                 sightings[state][shape]++;
-                //             }
-                //             // has state but no shape
-                //             else {
-                //                 sightings[state][shape] = 1;
-                //             }
-                //         } 
-                //         // neither state nor shape                      
-                //         else {
-                //             sightings[state] = {};
-                //             sightings[state][shape] = 1;
-                //         }  
-                //     }   
-                // });
-                // // adding totals
-                // Object.keys(sightings).forEach(function(stateKey, stateIndex) {
-                //     let total = 0;
-                //     Object.keys(sightings[stateKey]).forEach(function(shapeKey, shapeIndex) {
-                //         total += sightings[stateKey][shapeKey];
-                //     })
-                //     sightings[stateKey].total = total;
-                // });
                 sbt.group = d3.group(dataset, d => d.state);
                 
                 var size = {
@@ -89,17 +57,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .attr("d", pathGenerator({type: "Sphere"}))
                     .attr("fill", "white");
 
-                // drawing lat long lines
-                // var graticule = svg.append("path")
-                //     .attr("d", pathGenerator(d3.geoGraticule10()))
-                //     .attr("stroke", "gray")
-                //     .attr("fill", "none");
-                // var max = 0;
-                // Object.keys(sightings).forEach(function(key, index) {
-                //     if (sightings[key].total > max) {                        
-                //         max = sightings[key].total;
-                //     }      
-                // });
                 let max = d3.max(sbt.group, d => d[1].length);
 
                 sbt.colorScale = d3.scaleLinear()
@@ -133,7 +90,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                             .style("visibility", "visible")
                             .style("left", `${d.x + offset.x}px`)
                             .style("top", `${d.y + offset.y}px`)
-                            .text(`${i.properties.STUSPS}: ${sbt.group.get(state).length}`)
+                            .text(`${state}: ${sbt.count(state)}`)
                     })
                     .on("mouseout", function () {
                         // d3.select(this)
