@@ -1,17 +1,18 @@
 var sbt = {
     states: undefined,
-    colorScale: undefined
+    colorScale: undefined,
+    group: undefined
 }
 
 function transitionState(data) {
     // setting data up
-    let group = d3.group(data, d => d.state);
+    sbt.group = d3.group(data, d => d.state);
 
     sbt.states.transition()
         .attr("fill", d => {
-            let postal = d.properties.STUSPS.toLowerCase();
-            if(group.has(postal)) {
-                return sbt.colorScale(group.get(postal).length);
+            let state = d.properties.STUSPS.toLowerCase();
+            if(sbt.group.has(state)) {
+                return sbt.colorScale(sbt.group.get(state).length);
             }
             return sbt.colorScale(0);
         })
@@ -22,45 +23,45 @@ d3.csv("..\\..\\data\\final-data.csv").then(
         
         d3.json("..\\..\\data\\us-state-2.geojson").then(
             function(mapdata){
-                // getting a list of all us states and the counts of that generalized shape per sighting
-                const validStates = ['al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga', 'hi', 'id', 'il', 
-                'in', 'ia', 'ks', 'ky', 'la', 'me', 'md', 'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 
-                'nj', 'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', 'ri', 'sc', 'sd', 'tn', 'tx', 'ut', 'vt', 
-                'va', 'wa', 'wv', 'wi', 'wy'];
-                var sightings = {};
-                dataset.forEach(d => {
-                    var state = d["state"];
-                    var shape = d["generalizedShape"];
-                    if (validStates.includes(state)) {
-                        if (state == "") 
-                            state = "misc";
+                // // getting a list of all us states and the counts of that generalized shape per sighting
+                // const validStates = ['al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga', 'hi', 'id', 'il', 
+                // 'in', 'ia', 'ks', 'ky', 'la', 'me', 'md', 'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 
+                // 'nj', 'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', 'ri', 'sc', 'sd', 'tn', 'tx', 'ut', 'vt', 
+                // 'va', 'wa', 'wv', 'wi', 'wy'];
+                // var sightings = {};
+                // dataset.forEach(d => {
+                //     var state = d["state"];
+                //     var shape = d["generalizedShape"];
+                //     if (validStates.includes(state)) {
+                //         if (state == "") 
+                //             state = "misc";
 
-                        if (sightings.hasOwnProperty(state)) {
-                            // has state and shape
-                            if (sightings[state].hasOwnProperty(shape)) {
-                                sightings[state][shape]++;
-                            }
-                            // has state but no shape
-                            else {
-                                sightings[state][shape] = 1;
-                            }
-                        } 
-                        // neither state nor shape                      
-                        else {
-                            sightings[state] = {};
-                            sightings[state][shape] = 1;
-                        }  
-                    }   
-                });
-                // adding totals
-                Object.keys(sightings).forEach(function(stateKey, stateIndex) {
-                    let total = 0;
-                    Object.keys(sightings[stateKey]).forEach(function(shapeKey, shapeIndex) {
-                        total += sightings[stateKey][shapeKey];
-                    })
-                    sightings[stateKey].total = total;
-                });
-
+                //         if (sightings.hasOwnProperty(state)) {
+                //             // has state and shape
+                //             if (sightings[state].hasOwnProperty(shape)) {
+                //                 sightings[state][shape]++;
+                //             }
+                //             // has state but no shape
+                //             else {
+                //                 sightings[state][shape] = 1;
+                //             }
+                //         } 
+                //         // neither state nor shape                      
+                //         else {
+                //             sightings[state] = {};
+                //             sightings[state][shape] = 1;
+                //         }  
+                //     }   
+                // });
+                // // adding totals
+                // Object.keys(sightings).forEach(function(stateKey, stateIndex) {
+                //     let total = 0;
+                //     Object.keys(sightings[stateKey]).forEach(function(shapeKey, shapeIndex) {
+                //         total += sightings[stateKey][shapeKey];
+                //     })
+                //     sightings[stateKey].total = total;
+                // });
+                sbt.group = d3.group(dataset, d => d.state);
                 
                 var size = {
                     width: 600,
@@ -93,12 +94,14 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 //     .attr("d", pathGenerator(d3.geoGraticule10()))
                 //     .attr("stroke", "gray")
                 //     .attr("fill", "none");
-                var max = 0;
-                Object.keys(sightings).forEach(function(key, index) {
-                    if (sightings[key].total > max) {                        
-                        max = sightings[key].total;
-                    }      
-                });
+                // var max = 0;
+                // Object.keys(sightings).forEach(function(key, index) {
+                //     if (sightings[key].total > max) {                        
+                //         max = sightings[key].total;
+                //     }      
+                // });
+                let max = d3.max(sbt.group, d => d[1].length);
+                console.log(max);
 
                 sbt.colorScale = d3.scaleLinear()
                     .domain([0, max])
@@ -115,9 +118,9 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .attr("d", d => pathGenerator(d))
                     .attr("fill", d => {
                         var state = d.properties.STUSPS.toLowerCase();
-                        if(sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
-                            return sbt.colorScale(+sightings[state].total);
-                        }
+                        let count = sbt.group.get(state).length;
+                        if (count !== undefined)
+                            return sbt.colorScale(count);
                         return sbt.colorScale(0);
                    
                     })
@@ -127,15 +130,11 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         // d3.select(this)
                         //     .attr("stroke", "black")
                         var state = i.properties.STUSPS.toLowerCase();
-                        var total = 0
-                        if (sightings.hasOwnProperty(state)) {
-                            total = +sightings[state].total
-                        }
                         tooltip
                             .style("visibility", "visible")
                             .style("left", `${d.x + offset.x}px`)
                             .style("top", `${d.y + offset.y}px`)
-                            .text(`${i.properties.STUSPS}: ${total}`)
+                            .text(`${i.properties.STUSPS}: ${sbt.group.get(state).length}`)
                     })
                     .on("mouseout", function () {
                         // d3.select(this)
