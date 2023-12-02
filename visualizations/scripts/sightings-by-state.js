@@ -95,6 +95,33 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         return colorScale(0);
                    
                     })
+                    .on("click", function() {
+                        // resetting others visuals
+                        d3.selectAll(".state")
+                            .attr("fill", d => {
+                                var state = d.properties.STUSPS.toLowerCase();
+                                if(sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
+                                    return colorScale(+sightings[state].total);
+                                }
+                                return colorScale(0);
+                            })
+                            .attr("stroke", d => {
+                                // setting color
+                                   return "none";
+                               });
+                        
+                        // setting selections visuals
+                        d3.select(this)
+                            .attr("stroke", d => {
+                                return "steelblue";
+                            })
+                            .attr("stroke-width", "2px");
+
+                        // setting filters
+                        let state = this.__data__.properties.STUSPS.toLowerCase();
+                        Filters.stateFilter = []
+                        Filters.stateFilter.push(state);
+                    })
 
 
             }
