@@ -179,7 +179,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         .attr("r", 3)
                         .attr("selected", true)
                 }
-                Filters.input({year: this.__data__})
+                Filters.input({year: this.__data__});
             })
 	}
 )

@@ -22,8 +22,8 @@ var Filters = {
             }
         }
         if (year !== undefined) {
-            if (this.yearFilter.includes(String(year))) {
-                this.yearFilter = this.yearFilter.filter(e => String(e) !== String(year));
+            if (this.yearFilter.includes(year)) {
+                this.yearFilter = this.yearFilter.filter(e => e !== year);
             }
             else {
                 this.yearFilter.push(year);
@@ -109,7 +109,7 @@ var Filters = {
             }
             // filter by year
             let year = this.getYear(d.dateTime);
-            if (this.yearFilter.length !== 0 && skip !== 'year' && !this.yearFilter.includes(String(year))) {      
+            if (this.yearFilter.length !== 0 && skip !== 'year' && !this.yearFilter.includes(year)) {      
                 return false;
             }
             return true;
