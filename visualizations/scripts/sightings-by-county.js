@@ -8,6 +8,21 @@ var sbc = {
             return this.group.get(county).length;
         }
         return 0;
+    },
+
+    fips: [
+        'error',
+        'al', 'ak', ' ', 'az', 'ar', 'ca', ' ', 'co', 'ct', 'de', 'dc', 'fl', 'ga',
+        ' ', 'hi', 'id', 'il', 'in', 'ia', 'ks', 'ky', 'la', 'me', 'md',
+        'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 'nj',
+        'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', ' ', 'ri', 'sc',
+        'sd', 'tn', 'tx', 'ut', 'vt', 'va', 'wa', 'wv', 'wi', 'wy'
+    ],
+    convertFIPS(state) {
+        let index = +state;
+        if (this.fips.length - 1 >= index)
+            return this.fips[index];
+        return this.fips[0];
     }
 }
 
@@ -17,11 +32,14 @@ function transitionCounty(data) {
 
     sbc.counties.transition()
         .attr("fill", d => {
-            let county = d.properties["NAME"] + " County";
-            return sbc.colorScale(sbc.count(county));
+            let state = sbc.convertFIPS(d.properties["STATE"]);
+            if (Filters.stateFilter.length == 0 || Filters.stateFilter.includes(state)) {
+                var countyName = d.properties["NAME"] + " County";
+                return sbc.colorScale(sbc.count(countyName));       
+            }
+            return sbc.colorScale(0);  
         })
 }
-
 
 d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {    
     d3.json("..\\..\\data\\us-counties-geo.json").then(function(mapdata){
@@ -70,8 +88,12 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
             .attr("class", "county")
             .attr("d", d => pathGenerator(d))
             .attr("fill", d => {
-                var countyName = d.properties["NAME"] + " County";
-                return sbc.colorScale(sbc.count(countyName));
+                let state = sbc.convertFIPS(d.properties["STATE"]);
+                if (Filters.stateFilter.length == 0 || Filters.stateFilter.includes(state)) {
+                    var countyName = d.properties["NAME"] + " County";
+                    return sbc.colorScale(sbc.count(countyName));       
+                }
+                return sbc.colorScale(0);           
             })
             .on("mouseover", function (d, i) {
                 d3.select(this)
