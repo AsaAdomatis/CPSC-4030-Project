@@ -42,6 +42,11 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     height: 400
                 };
 
+                var offset = {
+                    x: 10,
+                    y: 10
+                }
+
                 var svg = d3.select("#sightings-by-county")
                     .attr("width", size.width)
                     .attr("height", size.height);
@@ -74,6 +79,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .domain(thresholds)
                     .range(d3.schemePuBu[thresholds.length]);
 
+                var tooltip = d3.select("tooltip")
+
                 var counties = svg.append("g")
                     .selectAll(".county")
                     .data(mapdata.features)
@@ -89,6 +96,23 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         else {
                             return "GhostWhite";
                         }
+                    })
+                    .on("mouseover", function (d, i) {
+                        d3.select(this)
+                            .attr("stroke", "black")
+                        var countyName = i.properties["NAME"] + " County"
+                        console.log(countyName)
+                        tooltip
+                            .style("visibility", "visible")
+                            .style("left", `${d.x + offset.x}px`)
+                            .style("top", `${d.y + offset.y}px`)
+                            .text(`${countyName}: ${+sightings[countyName].total}`)
+                    })
+                    .on("mouseout", function () {
+                        d3.select(this)
+                            .attr("stroke", "none")
+                        tooltip
+                            .style("visibility", "hidden")
                     })
 
             }

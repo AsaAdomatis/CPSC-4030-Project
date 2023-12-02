@@ -48,6 +48,11 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     height: 400
                 };
 
+                var offset = {
+                    x: 10,
+                    y: 10
+                }
+
                 var svg = d3.select("#sightings-by-state")
                     .attr("width", size.width)
                     .attr("height", size.height);
@@ -79,6 +84,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 var colorScale = d3.scaleLinear()
                     .domain([0, max])
                     .range(["GhostWhite", "DarkRed"]);
+
+                var tooltip = d3.select("tooltip")
                 
                 var states = svg.append("g")
                     .selectAll(".state")
@@ -97,18 +104,19 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     })
                     .on("mouseover", function (d, i) {
                         d3.select(this)
-                            .attr("fill", "black")
+                            .attr("stroke", "black")
+                        var state = i.properties.STUSPS.toLowerCase();
+                        tooltip
+                            .style("visibility", "visible")
+                            .style("left", `${d.x + offset.x}px`)
+                            .style("top", `${d.y + offset.y}px`)
+                            .text(`${i.properties.STUSPS}: ${+sightings[state].total}`)
                     })
                     .on("mouseout", function () {
-                        d3.selectAll(this)
-                            .attr("fill", d => {
-                                var state = d.properties.STUSPS.toLowerCase();
-                                if (sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
-                                    return colorScale(+sightings[state].total);
-                                }
-                                return colorScale(0);
-
-                            })
+                        d3.select(this)
+                            .attr("stroke", "none")
+                        tooltip
+                            .style("visibility", "hidden")
                     })
 
             }
