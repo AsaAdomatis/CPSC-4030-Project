@@ -12,8 +12,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
         }
 
         var offset = {
-            x: dimensions.margin.left + 450,
-            y: dimensions.margin.bottom + 50
+            x: 10,
+            y: 10
         }
 
         var shapes = {}
@@ -31,6 +31,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("width", dimensions.width)
             .attr("height", dimensions.height)
 
+        console.log(d3.select("body"))
+
         var xScale = d3.scaleBand()
             .domain(d3.map(dataset, d => d.generalizedShape))
             .range([dimensions.margin.left, dimensions.width - dimensions.margin.right])
@@ -47,14 +49,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .domain([0, max])
             .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
 
-        //var colorScale = d3.scaleOrdinal()
-        //    .domain(shapesKeys)
-        //    .range(["#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#66a61e", "#e6ab02", "#a6761d", "#666666"])
-
-        var tooltip = d3.select("body").append("div")
-            .attr("id", "tooltip")
-            .style("position", "absolute")
-            .text("test")
+        var tooltip = d3.select("tooltip")
 
         var bars = svg.append("g")
             .selectAll("g")
@@ -71,10 +66,9 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .attr("stroke", "black")
                 tooltip
                     .style("visibility", "visible")
-                    .style("left", (xScale(i) + offset.x) + 'px')
-                    .style("top", (yScale(shapes[i]) + offset.y) + 'px')
+                    .style("left", `${d.x + offset.x}px`)
+                    .style("top", `${d.y + offset.y}px`)
                     .text(`${shapes[i]}`)
-                    //console.log(svg)
             })
             .on("mouseout", function (d, i) {
                 d3.select(this)
@@ -91,7 +85,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
 
         var xAxis = d3.axisBottom(xScale)
             .tickFormat(function (d) { return d; })
-            //.tickValues(tickValues)
 
         var yAxis = d3.axisLeft(yScale)
 

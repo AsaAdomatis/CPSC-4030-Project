@@ -11,6 +11,11 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             }
         }
 
+        var offset = {
+            x: 10,
+            y: 10
+        }
+
         var tickSpacing = 5
 
         var parseDate = d3.timeParse("%m/%d/%Y %H:%M")
@@ -64,17 +69,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .domain([0, max])
             .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top])
 
-        svg.selectAll("circles")
-            .data(countKeys)
-            .enter()
-            .append("circle")
-            .attr("transform", "translate(" + -dimensions.margin.left + ",0)")
-            .attr("fill", "black")
-            .attr("stroke", "none")
-            .attr("cx", function (d) { return xScale(d) })
-            .attr("cy", function (d) { return yScale(count[d]) })
-            .attr("r", 1.5)
-
         var line = d3.line()
             .x(function (d) {
                 return xScale(d)
@@ -91,6 +85,39 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
             .attr("d", line(countKeys))
+
+        svg.selectAll("circles")
+            .data(countKeys)
+            .enter()
+            .append("circle")
+            .attr("transform", "translate(" + -dimensions.margin.left + ",0)")
+            .attr("fill", "black")
+            .attr("stroke", "none")
+            .attr("cx", function (d) { return xScale(d) })
+            .attr("cy", function (d) { return yScale(count[d]) })
+            .attr("r", 1.5)
+            .on("mouseover", function (d, i) {
+                d3.select(this)
+                    .attr("r", 3)
+                tooltip
+                    .style("visibility", "visible")
+                    .style("left", `${d.x + offset.x}px`)
+                    .style("top", `${d.y + offset.y}px`)
+                    .text(`${1}`)
+                console.log(i)
+            })
+            .on("mouseout", function (d, i) {
+                d3.select(this)
+                    .attr("r", 1.5)
+                tooltip
+                    .style("visibility", "hidden")
+            })
+            .on("click", function () {
+                d3.selectAll("circles")
+                    .attr("fill", "gray")
+                d3.select(this)
+                    .attr("fill", "black")
+            })
 
         var xTickValues = []
         for (var i = firstTick; i <= lastTick; i += tickSpacing) {

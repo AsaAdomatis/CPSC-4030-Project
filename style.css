@@ -5,7 +5,7 @@ center {
 }
 
 svg {
-    padding: 10px, 25px;
+    padding: 10px 25px;
     width: 100%;
     height: auto;
 }
@@ -41,10 +41,14 @@ horizontal {
 
 }
 
-tooltip {
+/*tooltip {
     position: absolute;
     pointer-events: none;
     background: #000;
-    color: #fff;
     visibility: hidden;
-}
+    width: 1000px;
+    height: 1000px;
+    color: #fff;
+    text-align: center;
+    font-size: 72px;
+}*/
