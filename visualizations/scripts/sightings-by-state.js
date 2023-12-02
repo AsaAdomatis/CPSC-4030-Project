@@ -82,6 +82,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     })
                     .attr("selected", false)
                     .attr("stroke-width", "3px")
+                    .style("cursor", "pointer")
                     .on("mouseover", function (d, i) {
                         // d3.select(this)
                         //     .attr("stroke", "black")

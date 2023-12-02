@@ -145,6 +145,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("cy", function (d) { return sby.yScale(sby.count.get(d).length) })
             .attr("r", 2)
             .attr("selected", false)
+            .style("cursor", "pointer")
             .on("mouseover", function (d, i) {
                 d3.select(this)
                     .attr("r", 10)
