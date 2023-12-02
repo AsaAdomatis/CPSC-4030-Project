@@ -101,7 +101,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         d3.select(this)
                             .attr("stroke", "black")
                         var countyName = i.properties["NAME"] + " County"
-                        console.log(countyName)
                         tooltip
                             .style("visibility", "visible")
                             .style("left", `${d.x + offset.x}px`)
