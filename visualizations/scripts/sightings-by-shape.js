@@ -49,6 +49,8 @@ function transitionShape(data) {
 
 d3.csv("..\\..\\data\\final-data.csv").then(
     function (dataset) {
+
+        dataset = Filters.filterBadDates(dataset)
         
         sbs.shapes = d3.group(dataset, function(d) {
             return d.generalizedShape
