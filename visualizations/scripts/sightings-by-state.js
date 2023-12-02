@@ -1,7 +1,20 @@
-var states;
+var sbt = {
+    states: undefined,
+    colorScale: undefined
+}
 
 function transitionState(data) {
+    // setting data up
+    let group = d3.group(data, d => d.state);
 
+    sbt.states.transition()
+        .attr("fill", d => {
+            let postal = d.properties.STUSPS.toLowerCase();
+            if(group.has(postal)) {
+                return sbt.colorScale(group.get(postal).length);
+            }
+            return sbt.colorScale(0);
+        })
 }
 
 d3.csv("..\\..\\data\\final-data.csv").then(
@@ -87,13 +100,13 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     }      
                 });
 
-                var colorScale = d3.scaleLinear()
+                sbt.colorScale = d3.scaleLinear()
                     .domain([0, max])
                     .range(["GhostWhite", "DarkRed"]);
 
                 var tooltip = d3.select("tooltip")
                 
-                states = svg.append("g")
+                sbt.states = svg.append("g")
                     .selectAll(".state")
                     .data(mapdata.features)
                     .enter()
@@ -103,9 +116,9 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .attr("fill", d => {
                         var state = d.properties.STUSPS.toLowerCase();
                         if(sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
-                            return colorScale(+sightings[state].total);
+                            return sbt.colorScale(+sightings[state].total);
                         }
-                        return colorScale(0);
+                        return sbt.colorScale(0);
                    
                     })
                     .on("mouseover", function (d, i) {
@@ -134,9 +147,9 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                             .attr("fill", d => {
                                 var state = d.properties.STUSPS.toLowerCase();
                                 if(sightings.hasOwnProperty(state) && sightings[state].hasOwnProperty("total")) {
-                                    return colorScale(+sightings[state].total);
+                                    return sbt.colorScale(+sightings[state].total);
                                 }
-                                return colorScale(0);
+                                return sbt.colorScale(0);
                             })
                             .attr("stroke", d => {
                                 // setting color
@@ -149,14 +162,9 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                                 return "steelblue";
                             })
                             .attr("stroke-width", "2px");
-
-                        // setting filters
-                        let state = this.__data__.properties.STUSPS.toLowerCase();
-                        Filters.stateFilter = []
-                        Filters.stateFilter.push(state);
+                        
+                            
                     })
-
-
             }
         )
     }

@@ -6,9 +6,12 @@ var Filters = {
     yearOriginal: [],
     stateOriginal: [],
     original: [],
-    filtered: [],
 
-    input(shape, year, state) {
+    input(obj) {
+        let shape = obj.shape;
+        let year = obj.year;
+        let state = obj.state;
+
         // applying input to filter, either adding it or removing it
         if (shape !== undefined) {
             if (this.shapeFilter.includes(shape)) {
@@ -19,8 +22,8 @@ var Filters = {
             }
         }
         if (year !== undefined) {
-            if (this.yearFilter.includes(year)) {
-                this.yearFiler = this.yearFilter.filter(e => e !== year);
+            if (this.yearFilter.includes(String(year))) {
+                this.yearFilter = this.yearFilter.filter(e => String(e) !== String(year));
             }
             else {
                 this.yearFilter.push(year);
@@ -35,17 +38,10 @@ var Filters = {
             }
         }
 
-        // resetting empy filters to there original
-        if (this.shapeFilter.length === 0)
-            this.shapeFilter = this.shapeOriginal;
-        if (this.stateFilter.length === 0)
-            this.stateFilter = this.stateOriginal;
-        if (this.yearFilter.length === 0)
-            this.yearFilter = this.yearOriginal;
-
-        this.applyFilters(original);
-
         // do transitions
+        let newStateData = this.applyFilters(this.original, 'state');
+        transitionState(newStateData);
+
     },
 
     filterBadDates(data) {
@@ -71,7 +67,13 @@ var Filters = {
         stateFilter = [];
     },
 
-    populateFilters() {
+    printFilters() {
+        console.log(this.shapeFilter);
+        console.log(this.yearFilter);
+        console.log(this.stateFilter);
+    },
+
+    populateOriginals() {
         let shapeSet = new Set();
         let yearSet = new Set();
         let stateSet = new Set();
@@ -82,48 +84,37 @@ var Filters = {
             stateSet.add(d.state);
         });
 
-        this.shapeFilter = Array.from(shapeSet);
-        this.yearFilter = Array.from(yearSet);
-        this.stateFilter = Array.from(stateSet);
-
-        this.shapeOriginal = this.shapeFilter;
-        this.yearOriginal = this.yearFilter;
-        this.stateOriginal = this.stateFilter;
+        this.shapeOriginal = Array.from(shapeSet);
+        this.yearOriginal = Array.from(yearSet);
+        this.stateOriginal = Array.from(stateSet);
     },
 
-    applyFilters(data) {
+    applyFilters(data, skip) {
         // filtering out bad times
         
         let filteredData = this.filterBadDates(data);
-
         filteredData = filteredData.filter(d => {
             // filtering by general shape
-            if (!(d.hasOwnProperty("generalizedShape") && shapeFilter.includes(d.generalizedShape))) {
+            if (this.shapeFilter.length !== 0 && skip !== 'shape' && !(d.hasOwnProperty("generalizedShape") && this.shapeFilter.includes(d.generalizedShape))) {
                 return false;
             }
             // filter by state
-            if (!(d.hasOwnProperty("state")) && stateFilter.includes(d.state)) {
+            if (this.stateFilter.length !== 0 && skip !== 'state' && !(d.hasOwnProperty("state")) && this.stateFilter.includes(d.state)) {
                 return false;
             }
             // filter by year
-            let parseDate = d3.timeParse("%m/%d/%Y %H:%M");
-            let year = parseDate(d.dateTime).getFullYear();
-            if (!(d.hasOwnProperty("dateTime") && yearFilter.includes(year))) {           
+            let year = this.getYear(d.dateTime);
+            if (this.yearFilter.length !== 0 && skip !== 'year' && !this.yearFilter.includes(String(year))) {      
                 return false;
             }
             return true;
         });
 
-        this.filtered = filteredData;
         return filteredData;
     }
 }
 
 d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
     Filters.original = data;
-    Filters.populateFilters();
-    Filters.stateFilter = ["ca", "az", "tx"]
-    console.log(Filters.shapeFilter);
-    console.log(Filters.yearFilter);
-    console.log(Filters.stateFilter);
+    Filters.populateOriginals();
 })
