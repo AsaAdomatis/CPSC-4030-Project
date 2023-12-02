@@ -101,7 +101,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 //     }      
                 // });
                 let max = d3.max(sbt.group, d => d[1].length);
-                console.log(max);
 
                 sbt.colorScale = d3.scaleLinear()
                     .domain([0, max])

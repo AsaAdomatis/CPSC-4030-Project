@@ -28,10 +28,23 @@ function transitionShape(data) {
     })
 
     sbs.bars.transition()
-        .attr("x", d => sbs.xScale(d))
-        .attr("y", d => sbs.yScale(sbs.shapes.get(d).length))
-        .attr("width", sbs.xScale.bandwidth())
-        .attr("height", d => (dimensions.height - dimensions.margin.bottom) - sbs.yScale(sbs.shapes.get(d).length))
+        .attr("y", d => {
+            if (sbs.shapes.has(d)) {
+                return sbs.yScale(sbs.shapes.get(d).length);
+            }             
+            else {
+                return sbs.yScale(0);
+            }
+            
+        })
+        .attr("height", d => {
+            if (sbs.shapes.has(d)) {
+                return (dimensions.height - dimensions.margin.bottom) - sbs.yScale(sbs.shapes.get(d).length);
+            }
+            else {
+                return 0;
+            }          
+        })
 }
 
 d3.csv("..\\..\\data\\final-data.csv").then(
@@ -41,7 +54,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             return d.generalizedShape
         })
         sbs.shapesKeys = Array.from(sbs.shapes.keys())
-        console.log(sbs.shapesKeys)
 
         var svg = d3.select("#sightings-by-shape")
             .attr("width", dimensions.width)
