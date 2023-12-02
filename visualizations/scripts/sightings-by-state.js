@@ -1,3 +1,9 @@
+var states;
+
+function transitionState(data) {
+
+}
+
 d3.csv("..\\..\\data\\final-data.csv").then(
     function(dataset) {
         
@@ -80,7 +86,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .domain([0, max])
                     .range(["GhostWhite", "DarkRed"]);
                 
-                var states = svg.append("g")
+                states = svg.append("g")
                     .selectAll(".state")
                     .data(mapdata.features)
                     .enter()
