@@ -139,24 +139,29 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .style("top", `${d.y + offset.y}px`)
                     .text(`${i}: ${count[i]}`)
             })
-            .on("mouseout", function (d, i) {
-                d3.select(this)
-                    .attr("r", 2)
+            .on("mouseout", function () {
+                if (this.getAttribute("selected") === "true") {
+                    d3.select(this)
+                        .attr("r", 3)
+                }
+                else {
+                    d3.select(this)
+                        .attr("r", 2)
+                }
                 tooltip
                     .style("visibility", "hidden")
             })
             .on("click", function () {
                 if (this.getAttribute("selected") === "true") {
-                    d3.selectAll("circle")
+                    d3.select(this)
                         .attr("fill", "black")
+                        .attr("r", 2)
                         .attr("selected", false)
                 }
                 else {
-                    d3.selectAll("circle")
-                        .attr("fill", "gray")
-                        .attr("selected", false)
                     d3.select(this)
-                        .attr("fill", "black")
+                        .attr("fill", "red")
+                        .attr("r", 3)
                         .attr("selected", true)
                 }
             })

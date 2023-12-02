@@ -69,7 +69,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .style("top", `${d.y + offset.y}px`)
                     .text(`${shapes[i]}`)
             })
-            .on("mouseout", function (d, i) {
+            .on("mouseout", function () {
                 d3.select(this)
                     .attr("stroke", "none")
                 tooltip
@@ -77,16 +77,13 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             })
             .on("click", function () {
                 if (this.getAttribute("selected") === "true") {
-                    d3.selectAll("rect")
+                    d3.select(this)
                         .attr("fill", "steelblue")
                         .attr("selected", false)
                 }
                 else {
-                    d3.selectAll("rect")
-                        .attr("fill", "skyblue")
-                        .attr("selected", false)
                     d3.select(this)
-                        .attr("fill", "steelblue")
+                        .attr("fill", "midnightblue")
                         .attr("selected", true)
                 }
             })
