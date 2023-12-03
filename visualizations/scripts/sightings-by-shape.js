@@ -90,6 +90,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("height", d => (dimensions.height - dimensions.margin.bottom) - sbs.yScale(sbs.shapes.get(d).length))
             .attr("fill", "steelblue")
             .attr("selected", false)
+            .style("cursor", "pointer")
             .on("mouseover", function (d, i) {
                 d3.select(this)
                     .attr("stroke", "black")
