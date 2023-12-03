@@ -9,8 +9,8 @@ var sby = {
 }
 
 var dimensions = {
-    width: 400,
-    height: 400,
+    width: 375,
+    height: 375,
     margin: {
         top: 10,
         bottom: 60,
@@ -182,12 +182,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("y", dimensions.height - dimensions.margin.top)
             .text("Years")
 
-        svg.append("text")
-            .attr("x", (dimensions.width / 2) - (dimensions.margin.right * 3))             
-            .attr("y", 0 + (dimensions.margin.top / 2))
-            .attr("text-anchor", "middle")  
-            .style("font-size", "16px") 
-            .style("text-decoration", "underline")  
-            .text("Sightings by Year")
+        d3.select("#sightings-by-year-title")
+            .text("Sightings per Year")
 	}
 )
