@@ -140,6 +140,14 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("transform", "translate(" + dimensions.margin.left + ",0)")
             .call(yAxis)
 
+        svg.append("text")
+            .attr("x", (dimensions.margin.right * 2) + (dimensions.width / 2))             
+            .attr("y", 0 + (dimensions.margin.top * 2))
+            .attr("text-anchor", "middle")  
+            .style("font-size", "16px") 
+            .style("text-decoration", "underline")  
+            .text("Sightings by Shape")
+
         //svg.append("text")
         //    .attr("class", "x-axis-label")
         //    .attr("x", dimensions.width / 2)
