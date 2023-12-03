@@ -93,14 +93,14 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
 
         let max = d3.max(sbc.group, d => d[1].length);
 
-        // var thresholds = [0, 5, 10, 25, 50, 100, 250, 500]
-        // sbc.colorScale = d3.scaleThreshold()
-        //     .domain(thresholds)
-        //     .range(d3.schemePuBu[thresholds.length]);
-        sbc.colorScale = d3.scaleLinear()
-            .domain([0, max])
-            .range(["GhostWhite", "DarkBlue"])
-            .nice();
+        var thresholds = [1, 5, 10, 25, 50, 100, 250]
+        sbc.colorScale = d3.scaleThreshold()
+            .domain(thresholds)
+            .range(d3.schemePuBu[thresholds.length]);
+        // sbc.colorScale = d3.scaleLinear()
+        //     .domain([0, max])
+        //     .range(["GhostWhite", "DarkBlue"])
+        //     .nice();
 
         var tooltip = d3.select("tooltip")
 
@@ -151,12 +151,24 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
                 .attr("height", lsize.height);
 
             let legend = d3.legendColor()
-                //.title("Sightings per County")
-                .scale(sbc.colorScale);
+                .scale(sbc.colorScale)
+                .labels(d => {
+                    if (d.i == 0) {
+                        return "0.0";
+                    }
+                    else if (d.i == d.genLength - 1) {
+                        return d.domain[d.i] + "+";
+                    }
+                    else
+                        return d.generatedLabels[d.i];
+                });
             lsvg.append("g")
                 .attr("transform", `translate(${lsize.left}, ${lsize.top})`)
                 .call(legend);
 
+            d3.selectAll("text")
+                .style("font-size", "14px");
+            
             d3.select("#sightings-by-county-title")
                 .text("Sightings per County")
          
