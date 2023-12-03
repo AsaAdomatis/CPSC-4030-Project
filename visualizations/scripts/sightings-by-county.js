@@ -1,39 +1,68 @@
+var sbc = {
+    counties: undefined,
+    colorScale: undefined,
+    group: undefined,
+    data: undefined,
+
+    count(county, state) {
+        if (state === undefined) {
+            if(this.group.has(county)) {
+                return this.group.get(county).length;
+            }
+            return 0;
+        }
+        else {
+            if(this.group.has(county)) {
+                let arr = this.data.filter(d => d.state === state);
+                let g = d3.group(arr, d => d.county);
+                if (g.has(county)) {
+                    return g.get(county).length 
+                }
+                return 0;
+            }
+            return 0;
+        }
+
+    },
+
+    fips: [
+        'error',
+        'al', 'ak', ' ', 'az', 'ar', 'ca', ' ', 'co', 'ct', 'de', 'dc', 'fl', 'ga',
+        ' ', 'hi', 'id', 'il', 'in', 'ia', 'ks', 'ky', 'la', 'me', 'md',
+        'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 'nj',
+        'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', ' ', 'ri', 'sc',
+        'sd', 'tn', 'tx', 'ut', 'vt', 'va', 'wa', 'wv', 'wi', 'wy'
+    ],
+    convertFIPS(state) {
+        let index = +state;
+        if (this.fips.length - 1 >= index)
+            return this.fips[index];
+        return this.fips[0];
+    }
+}
+
+function transitionCounty(data) {
+    sbc.data = data;
+    // setting data up
+    sbc.group = d3.group(data, d => d.county);
+    sbc.counties.transition()
+        .attr("fill", d => {
+            let state = sbc.convertFIPS(d.properties["STATE"]);
+            if (Filters.stateFilter.length == 0 || Filters.stateFilter.includes(state)) {
+                var countyName = d.properties["NAME"] + " County";
+                return sbc.colorScale(sbc.count(countyName, state));       
+            }
+            return sbc.colorScale(0);  
+        })
+}
+
 d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {    
     d3.json("..\\..\\data\\us-counties-geo.json").then(function(mapdata){
         // getting a list of all us states and the counts of that generalized shape per sighting
-        const validStates = ['al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga', 'hi', 'id', 'il', 
-        'in', 'ia', 'ks', 'ky', 'la', 'me', 'md', 'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 
-        'nj', 'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', 'ri', 'sc', 'sd', 'tn', 'tx', 'ut', 'vt', 
-        'va', 'wa', 'wv', 'wi', 'wy'];
-        var sightings = {};
-        dataset.forEach(d => {
-            var county = d.county;
-            var shape = d.generalizedShape;
-            if (validStates.includes(d.state)) {
-                if (sightings.hasOwnProperty(county)) {
-                    if (sightings[county].hasOwnProperty(shape)) {
-                        sightings[county][shape]++;
-                    }
-                    else {
-                        sightings[county][shape] = 1;
-                    }
-                }                
-                else {
-                    sightings[county] = {};
-                    sightings[county][shape] = 1;
-                }  
-            }   
-        });
-        // adding totals
-        Object.keys(sightings).forEach(function(countyKey, countyIndex) {
-            let total = 0;
-            Object.keys(sightings[countyKey]).forEach(function(shapeKey, shapeIndex) {
-                total += sightings[countyKey][shapeKey];
-            })
-            sightings[countyKey].total = total;
-        });
+        dataset = Filters.filterBadDates(dataset);
+        sbc.data = dataset;
+        sbc.group = d3.group(dataset, d => d.county);
 
-        
         var size = {
             width: 800,
             height: 800
@@ -58,21 +87,16 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
             .attr("d", pathGenerator({type: "Sphere"}))
             .attr("fill", "white");
 
-        var max = 0;
-        Object.keys(sightings).forEach(function(key, index) {
-            if (sightings[key].total > max) {                        
-                max = sightings[key].total;
-            }      
-        });
+        let max = d3.max(sbc.group, d => d[1].length);
 
-        var thresholds = [1, 5, 10, 25, 50, 100, 250, 500]
-        var colorScale = d3.scaleThreshold()
+        var thresholds = [0, 5, 10, 25, 50, 100, 250, 500]
+        sbc.colorScale = d3.scaleThreshold()
             .domain(thresholds)
             .range(d3.schemePuBu[thresholds.length]);
 
         var tooltip = d3.select("tooltip")
 
-        var counties = svg.append("g")
+        sbc.counties = svg.append("g")
             .selectAll(".county")
             .data(mapdata.features)
             .enter()
@@ -80,27 +104,23 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
             .attr("class", "county")
             .attr("d", d => pathGenerator(d))
             .attr("fill", d => {
-                var countyName = d.properties["NAME"] + " County";
-                if(sightings.hasOwnProperty(countyName)) {
-                    return colorScale(+sightings[countyName].total);
+                let state = sbc.convertFIPS(d.properties["STATE"]);
+                if (Filters.stateFilter.length == 0 || Filters.stateFilter.includes(state)) {
+                    var countyName = d.properties["NAME"] + " County";
+                    return sbc.colorScale(sbc.count(countyName, state));       
                 }
-                else {
-                    return "GhostWhite";
-                }
+                return sbc.colorScale(0);           
             })
             .on("mouseover", function (d, i) {
                 d3.select(this)
-                    .attr("stroke", "black")
-                var countyName = i.properties["NAME"] + " County"
-                var total = 0
-                if (sightings.hasOwnProperty(countyName)) {
-                    total = +sightings[countyName].total
-                }
+                    .attr("stroke", "black");
+                var countyName = i.properties["NAME"] + " County";
+                let state = sbc.convertFIPS(i.properties["STATE"]);
                 tooltip
                     .style("visibility", "visible")
                     .style("left", `${d.x + offset.x}px`)
                     .style("top", `${d.y + offset.y}px`)
-                    .text(`${countyName}: ${total}`)
+                    .text(`${countyName}: ${sbc.count(countyName, state)}`);
             })
             .on("mouseout", function () {
                 d3.select(this)

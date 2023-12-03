@@ -45,8 +45,9 @@ var Filters = {
         transitionShape(newShapeData);
         let newYearData = this.applyFilters(this.original, 'year');
         transitionYear(newYearData);
-        let newDurationData = this.applyFilters(this.original, 'all');
-        transitionDuration(newDurationData);
+        let newData = this.applyFilters(this.original, 'all');
+        transitionDuration(newData);
+        transitionCounty(newData);
     },
 
     filterBadDates(data) {
