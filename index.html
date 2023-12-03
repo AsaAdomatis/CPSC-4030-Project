@@ -5,7 +5,8 @@
         <title>CPSC 4030 Project Website</title>
         <link rel="stylesheet" type="text/css" href="style.css">
         <script src="https://d3js.org/d3.v7.min.js"></script>
-        <script src="visualizations/scripts/active-filters.js"></script>
+        <script src="visualizations/scripts/active-filters.js"></script>       
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script><!-- legends module for d3 -->
     </head>
     <body>
         <center>
@@ -14,7 +15,14 @@
             <hr>
 
             <container>
-
+                <vertical>
+                    <div>
+                        <svg id="county-legend"></svg>
+                    </div>
+                    <div>
+                        <svg id="state-legend"></svg>
+                    </div>
+                </vertical>
                 <vertical>
                     <div>
                         <svg id="sightings-by-county"></svg>
