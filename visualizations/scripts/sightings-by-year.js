@@ -90,7 +90,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 return sby.yScale(sby.count.get(d).length)
             })
 
-
         sby.path = svg.append("path")
             .data(dataset)
             .attr("transform", "translate(" + -dimensions.margin.left + ",0)")
@@ -99,42 +98,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
             .attr("stroke-width", 1.5)
             .attr("d", sby.line(sby.countKeys))
 
-        var xTickValues = []
-        for (var i = firstTick; i <= lastTick; i += tickSpacing) {
-            xTickValues.push(i)
-        }
-
-        var xAxis = d3.axisBottom(sby.xScale)
-            .tickFormat(function (d) { return d; })
-            .tickValues(xTickValues)
-
-        var yAxis = d3.axisLeft(sby.yScale)
-
-        svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(" + -dimensions.margin.left + "," + (dimensions.height - dimensions.margin.bottom) + ")")
-            .call(xAxis)
-            .selectAll("text")
-            .style("font", "14px sans-serif")
-            .style("text-anchor", "end")
-            .attr("dx", -5)
-            .attr("dy", 0)
-            .attr("transform", "rotate(-45)")
-
-
-        svg.append("g")
-            .attr("class", "y axis")
-            .call(yAxis)
-            .selectAll("text")
-            .style("font", "14px sans-serif")
-
-        svg.append("text")
-            .attr("class", "x-axis-label")
-            .attr("x", dimensions.width / 2)
-            .attr("y", dimensions.height - dimensions.margin.top)
-            .text("Years")
-
-        sby.circles = svg.selectAll("circles")
+            sby.circles = svg.selectAll("circles")
             .data(sby.countKeys)
             .enter()
             .append("circle")
@@ -182,5 +146,48 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 }
                 Filters.input({year: this.__data__});
             })
+
+        var xTickValues = []
+        for (var i = firstTick; i <= lastTick; i += tickSpacing) {
+            xTickValues.push(i)
+        }
+
+        var xAxis = d3.axisBottom(sby.xScale)
+            .tickFormat(function (d) { return d; })
+            .tickValues(xTickValues)
+
+        var yAxis = d3.axisLeft(sby.yScale)
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(" + -dimensions.margin.left + "," + (dimensions.height - dimensions.margin.bottom) + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("font", "14px sans-serif")
+            .style("text-anchor", "end")
+            .attr("dx", -5)
+            .attr("dy", 0)
+            .attr("transform", "rotate(-45)")
+
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .selectAll("text")
+            .style("font", "14px sans-serif")
+
+        svg.append("text")
+            .attr("class", "x-axis-label")
+            .attr("x", dimensions.width / 2)
+            .attr("y", dimensions.height - dimensions.margin.top)
+            .text("Years")
+
+        svg.append("text")
+            .attr("x", (dimensions.width / 2) - (dimensions.margin.right * 3))             
+            .attr("y", 0 + (dimensions.margin.top / 2))
+            .attr("text-anchor", "middle")  
+            .style("font-size", "16px") 
+            .style("text-decoration", "underline")  
+            .text("Sightings by Year")
 	}
 )

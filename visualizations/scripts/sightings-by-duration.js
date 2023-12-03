@@ -158,4 +158,12 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
             tooltip
                 .style("visibility", "hidden")
         })
+    
+    svg.append("text")
+        .attr("x", (size.right * 2) + (size.width) - 100)             
+        .attr("y", 0 + (size.top * 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Distribution of Sightings' Durations in Seconds")
 })
