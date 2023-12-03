@@ -166,6 +166,9 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
                 .attr("transform", `translate(${lsize.left}, ${lsize.top})`)
                 .call(legend);
 
+            d3.selectAll("text")
+                .style("font-size", "14px");
+            
             d3.select("#sightings-by-county-title")
                 .text("Sightings per County")
          
