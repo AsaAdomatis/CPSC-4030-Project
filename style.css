@@ -37,8 +37,10 @@ vertical {
     flex-direction: column;
 }
 
-horizontal {
-
+chart {
+    text-anchor: middle;
+    text-decoration: underline;
+    font-size: 20px;
 }
 
 /*tooltip {
