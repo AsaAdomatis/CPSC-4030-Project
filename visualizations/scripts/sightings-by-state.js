@@ -125,10 +125,17 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 let lsvg = d3.select("#state-legend")
                     .attr("width", lsize.width)
                     .attr("height", lsize.height);
-                console.log(sbt.colorScale)
                 let legend = d3.legendColor()
                     .title("Sightings per State")
                     .scale(sbt.colorScale)
+                    .labels(d => {
+                        console.log(d);
+                        if (d.i == d.genLength - 1) {
+                            return d.generatedLabels[d.i] + "+";
+                        }
+                        else
+                            return d.generatedLabels[d.i] + " to " + d.generatedLabels[d.i + 1];
+                    });
                 lsvg.append("g")
                     .attr("transform", `translate(${lsize.left}, ${lsize.top})`)
                     .call(legend);
