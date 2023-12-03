@@ -112,6 +112,14 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                                 .attr("selected", true)
                         }
                     })
+
+                    // legend
+                    let legend = d3.legendColor()
+                        .title("Sightings per State")
+                        .scale(sbt.colorScale);
+                    svg.append("g")
+                        .attr("transform", "translate(600,25)")
+                        .call(legend);
             }
         )
     }

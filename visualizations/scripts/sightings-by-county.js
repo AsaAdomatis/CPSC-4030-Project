@@ -109,6 +109,15 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
                     .style("visibility", "hidden")
             })
             .on('click', function() {});
+
+            
+            // legend
+            let legend = d3.legendColor()
+                .title("Sightings per State")
+                .scale(sbc.colorScale);
+            svg.append("g")
+                .attr("transform", "translate(600,25)")
+                .call(legend);
          
     })
 })
