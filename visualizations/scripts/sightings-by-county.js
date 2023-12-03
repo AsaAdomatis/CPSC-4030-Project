@@ -64,8 +64,12 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
         sbc.group = d3.group(dataset, d => d.county);
 
         var size = {
-            width: 800,
-            height: 800
+            width: 600,
+            height: 400,
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 10,
         };
 
         var offset = {
@@ -89,10 +93,14 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
 
         let max = d3.max(sbc.group, d => d[1].length);
 
-        var thresholds = [0, 5, 10, 25, 50, 100, 250, 500]
-        sbc.colorScale = d3.scaleThreshold()
-            .domain(thresholds)
-            .range(d3.schemePuBu[thresholds.length]);
+        // var thresholds = [0, 5, 10, 25, 50, 100, 250, 500]
+        // sbc.colorScale = d3.scaleThreshold()
+        //     .domain(thresholds)
+        //     .range(d3.schemePuBu[thresholds.length]);
+        sbc.colorScale = d3.scaleLinear()
+            .domain([0, max])
+            .range(["GhostWhite", "DarkBlue"])
+            .nice();
 
         var tooltip = d3.select("tooltip")
 
@@ -132,11 +140,21 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {
 
             
             // legend
+            let lsize = {
+                width: 200,
+                height: size.height,
+                top: 25,
+                left: 25
+            }
+            let lsvg = d3.select("#county-legend")
+                .attr("width", lsize.width)
+                .attr("height", lsize.height);
+
             let legend = d3.legendColor()
-                .title("Sightings per State")
+                .title("Sightings per County")
                 .scale(sbc.colorScale);
-            svg.append("g")
-                .attr("transform", "translate(600,25)")
+            lsvg.append("g")
+                .attr("transform", `translate(${lsize.left}, ${lsize.top})`)
                 .call(legend);
          
     })

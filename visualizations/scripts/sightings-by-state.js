@@ -61,7 +61,8 @@ d3.csv("..\\..\\data\\final-data.csv").then(
 
                 sbt.colorScale = d3.scaleLinear()
                     .domain([0, max])
-                    .range(["GhostWhite", "DarkRed"]);
+                    .range(["GhostWhite", "DarkRed"])
+                    .nice();
 
                 var tooltip = d3.select("tooltip")
                 
@@ -114,13 +115,23 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                         }
                     })
 
-                    // legend
-                    let legend = d3.legendColor()
-                        .title("Sightings per State")
-                        .scale(sbt.colorScale);
-                    svg.append("g")
-                        .attr("transform", "translate(600,25)")
-                        .call(legend);
+                // legend
+                let lsize = {
+                    width: 200,
+                    height: size.height,
+                    top: 25,
+                    left: 25
+                }
+                let lsvg = d3.select("#state-legend")
+                    .attr("width", lsize.width)
+                    .attr("height", lsize.height);
+                console.log(sbt.colorScale)
+                let legend = d3.legendColor()
+                    .title("Sightings per State")
+                    .scale(sbt.colorScale)
+                lsvg.append("g")
+                    .attr("transform", `translate(${lsize.left}, ${lsize.top})`)
+                    .call(legend);
             }
         )
     }
