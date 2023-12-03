@@ -126,7 +126,7 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                     .attr("width", lsize.width)
                     .attr("height", lsize.height);
                 let legend = d3.legendColor()
-                    .title("Sightings per State")
+                    //.title("Sightings per State")
                     .scale(sbt.colorScale)
                     .labels(d => {
                         console.log(d);
@@ -139,6 +139,9 @@ d3.csv("..\\..\\data\\final-data.csv").then(
                 lsvg.append("g")
                     .attr("transform", `translate(${lsize.left}, ${lsize.top})`)
                     .call(legend);
+
+                d3.select("#sightings-by-state-title")
+                    .text("Sightings per State")
             }
         )
     }

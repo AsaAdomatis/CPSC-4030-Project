@@ -159,11 +159,6 @@ d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
                 .style("visibility", "hidden")
         })
     
-    svg.append("text")
-        .attr("x", (size.right * 2) + (size.width) - 100)             
-        .attr("y", 0 + (size.top * 2))
-        .attr("text-anchor", "middle")  
-        .style("font-size", "16px") 
-        .style("text-decoration", "underline")  
+    d3.select("#sightings-by-duration-title")
         .text("Distribution of Sightings' Durations in Seconds")
 })
