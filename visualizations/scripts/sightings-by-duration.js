@@ -32,7 +32,7 @@ function transitionDuration(data) {
         .attr("y2", (d, i) => sbd.y(sbd.sumStats[i*2]));
 }
 
-d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
+d3.csv("./data/final-data.csv").then(function(data) {
     var size = {
         width: 400,
         height: 600,

@@ -42,7 +42,7 @@ function transitionYear(data) {
         })
 }
 
-d3.csv("..\\..\\data\\final-data.csv").then(
+d3.csv("./data/final-data.csv").then(
 	function(dataset){
         var tickSpacing = 5
 

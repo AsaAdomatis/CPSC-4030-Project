@@ -56,8 +56,8 @@ function transitionCounty(data) {
         })
 }
 
-d3.csv("..\\..\\data\\final-data.csv").then(function(dataset) {    
-    d3.json("..\\..\\data\\us-counties-geo.json").then(function(mapdata){
+d3.csv("./data/final-data.csv").then(function(dataset) {    
+    d3.json("./data/us-counties-geo.json").then(function(mapdata){
         // getting a list of all us states and the counts of that generalized shape per sighting
         dataset = Filters.filterBadDates(dataset);
         sbc.data = dataset;

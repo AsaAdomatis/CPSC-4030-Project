@@ -24,10 +24,10 @@ function transitionState(data) {
         })
 }
 
-d3.csv("..\\..\\data\\final-data.csv").then(
+d3.csv("./data/final-data.csv").then(
     function(dataset) {
         
-        d3.json("..\\..\\data\\us-state-2.geojson").then(
+        d3.json("./data/us-state-2.geojson").then(
             function(mapdata){
                 sbt.group = d3.group(dataset, d => d.state);
                 
