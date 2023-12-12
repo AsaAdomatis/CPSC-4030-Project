@@ -120,7 +120,7 @@ var Filters = {
     }
 }
 
-d3.csv("..\\..\\data\\final-data.csv").then(function(data) {
+d3.csv("./data/final-data.csv").then(function(data) {
     Filters.original = data;
     Filters.populateOriginals();
 })
