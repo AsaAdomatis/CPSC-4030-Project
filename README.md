@@ -1,8 +1,6 @@
 # CPSC-4030-Project
 Semester long project for Clemson's CPSC 4030 Data Visualization.
 
-Tableau file is in /data
-
-Proposal is in root
-
-The description of the visualizations isn't finished yet because we haven't settled on what visualizations to use
+Deployed here: https://asaadomatis.github.io/CPSC-4030-Project/
+Link for demo: https://drive.google.com/file/d/19vgaE3Rh33hWdEasppcc6LVa1CZm0UZm/view?usp=sharing
+  (Email: asaa@clemson.edu if not working)
